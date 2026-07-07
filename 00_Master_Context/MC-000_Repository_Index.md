@@ -5,7 +5,7 @@ MASTER CONTEXT
 
 Document ID      : MC-000
 Document Title   : Repository Index
-Version          : 2.0.0
+Version          : 2.2.0
 Status           : Draft (Architecture Review)
 Document Owner   : Chief Architecture Office
 Product Owner    : Anil Kumar
@@ -57,6 +57,10 @@ Engineering Standards
 
 ↓
 
+Reference Architecture
+
+↓
+
 Build Packs
 
 ↓
@@ -101,19 +105,25 @@ Project_ATLAS/
 
 ├── 04_Build_Packs/
 
-├── 05_Implementation_Packs/
+├── 05_Reference_Architecture/
 
-├── 06_API/
+├── 06_Implementation_Packs/
 
-├── 07_Database/
+├── 07_ADRs/
 
-├── 08_UI_UX/
+├── 08_Templates/
 
-├── 09_Testing/
+├── 09_Assets/
 
-├── 10_Deployment/
+├── 10_API/
 
-├── 11_ADRs/
+├── 11_Database/
+
+├── 12_UI_UX/
+
+├── 13_Testing/
+
+├── 14_Deployment/
 
 ├── 99_Reference/
 
@@ -175,6 +185,16 @@ Implementation standards.
 
 Layer 5
 
+Reference Architecture
+
+Purpose
+
+Reference implementation blueprints.
+
+------------------------------------------------------------
+
+Layer 6
+
 Build Packs
 
 Purpose
@@ -183,7 +203,7 @@ Implementation planning.
 
 ------------------------------------------------------------
 
-Layer 6
+Layer 7
 
 Implementation Packs
 
@@ -193,7 +213,7 @@ Developer implementation guidance.
 
 ------------------------------------------------------------
 
-Layer 7
+Layer 8
 
 Source Code
 
@@ -203,7 +223,7 @@ Executable software.
 
 ------------------------------------------------------------
 
-Layer 8
+Layer 9
 
 Testing
 
@@ -213,7 +233,7 @@ Verification and validation.
 
 ------------------------------------------------------------
 
-Layer 9
+Layer 10
 
 Deployment
 
@@ -410,7 +430,7 @@ DOMAIN DOCUMENTS
 
 The Domain Layer defines the business model of Project ATLAS.
 
-Planned Domain Documents
+Domain Documents
 
 DOMAIN-001
 
@@ -472,7 +492,7 @@ AI Domain
 
 Status
 
-Planned
+Draft (Architecture Review)
 
 ============================================================
 ENGINEERING STANDARDS
@@ -480,11 +500,11 @@ ENGINEERING STANDARDS
 
 The Engineering Standards define implementation rules for every engineering discipline.
 
-Planned Documents
+Documents
 
 ES-001
 
-Coding Standards
+Engineering Standards
 
 ------------------------------------------------------------
 
@@ -521,6 +541,76 @@ DevOps Standards
 ES-007
 
 Testing Standards
+
+Status
+
+Draft (Architecture Review)
+
+============================================================
+REFERENCE ARCHITECTURE DOCUMENTS
+============================================================
+
+The Reference Architecture Layer translates approved Architecture, Domain, and Engineering Standard documents into reference implementation blueprints.
+
+Planned Documents
+
+RA-001
+
+Backend Reference Architecture
+
+------------------------------------------------------------
+
+RA-002
+
+Frontend Reference Architecture
+
+------------------------------------------------------------
+
+RA-003
+
+AI Platform Reference Architecture
+
+------------------------------------------------------------
+
+RA-004
+
+Infrastructure Reference Architecture
+
+------------------------------------------------------------
+
+RA-005
+
+Data Platform Reference Architecture
+
+------------------------------------------------------------
+
+RA-006
+
+Event-Driven Architecture Reference
+
+------------------------------------------------------------
+
+RA-007
+
+AI Agent Runtime Reference
+
+------------------------------------------------------------
+
+RA-008
+
+RAG Platform Reference
+
+------------------------------------------------------------
+
+RA-009
+
+Multi-Tenant Reference
+
+------------------------------------------------------------
+
+RA-010
+
+Observability & Operations Reference
 
 Status
 
@@ -701,6 +791,10 @@ Engineering Standards
 
 ↓
 
+Reference Architecture Documents
+
+↓
+
 Build Packs
 
 ↓
@@ -723,7 +817,7 @@ Master Context
 
 Completed
 
-5 Documents
+6 Documents
 
 Architecture
 
@@ -743,15 +837,21 @@ Repository Index
 
 Domain Documents
 
-Planned
+Completed
 
 10 Documents
 
 Engineering Standards
 
-Planned
+Completed
 
 7 Documents
+
+Reference Architecture
+
+Planned
+
+10 Documents
 
 Build Packs
 
@@ -767,7 +867,7 @@ Planned
 
 Total Planned Repository Documents
 
-Approximately 50+ Core Engineering Documents
+Approximately 60+ Core Engineering Documents
 
 This number excludes APIs, Database Specifications, ADRs, UI/UX Specifications, Test Plans, and Reference Documents.
 
@@ -904,6 +1004,42 @@ Major Improvements
 • Lifecycle Definition
 
 • Cross-Layer Documentation Index
+
+------------------------------------------------------------
+
+Version 2.1.0
+
+Repository Stabilization
+
+• Registered Reference Architecture document series (RA-001 through RA-010)
+
+• Added 05_Reference_Architecture/ to repository structure
+
+• Added 99_Assets/ to repository structure listing
+
+• Inserted Reference Architecture layer into repository layers and reading order
+
+• Updated repository statistics (Domains and Engineering Standards completed)
+
+• Editorial alignment of ES-001 title (Engineering Standards)
+
+------------------------------------------------------------
+
+Version 2.2.0
+
+Repository Finalization
+
+• Finalized sequential repository folder numbering
+
+• 05_Reference_Architecture retained; Implementation Packs renumbered to 06
+
+• ADRs renumbered to 07_ADRs
+
+• Added 08_Templates
+
+• Assets renumbered to 09_Assets
+
+• Specification folders renumbered to 10_API, 11_Database, 12_UI_UX, 13_Testing, 14_Deployment
 
 ============================================================
 REPOSITORY FREEZE DECLARATION

@@ -5,7 +5,7 @@ MASTER CONTEXT
 
 Document ID      : MC-005
 Document Title   : Terminology & Glossary
-Version          : 1.1.0
+Version          : 1.1.1
 Status           : Draft (Architecture Review)
 Document Owner   : Product Office
 Product Owner    : Anil Kumar
@@ -563,29 +563,51 @@ Build Packs
 
 04_Build_Packs/
 
+Reference Architecture
+
+05_Reference_Architecture/
+
 Implementation Packs
 
-05_Implementation_Packs/
+06_Implementation_Packs/
+
+Architecture Decision Records
+
+07_ADRs/
+
+Templates
+
+08_Templates/
+
+Assets
+
+09_Assets/
 
 API Specifications
 
-06_API/
+10_API/
 
 Database
 
-07_Database/
+11_Database/
 
 User Experience
 
-08_UI_UX/
+12_UI_UX/
 
 Testing
 
-09_Testing/
+13_Testing/
 
 Deployment
 
-10_Deployment/
+14_Deployment/
+
+Reference Materials
+
+99_Reference/
+
+The authoritative repository structure is maintained in MC-000 Repository Index.
 
 Folder names shall remain stable throughout the lifetime of the repository.
 
@@ -669,6 +691,14 @@ Major Improvements
 • Governance rules added
 • Reserved terminology defined
 • Repository folder terminology aligned
+
+------------------------------------------------------------
+
+Version 1.1.1
+
+Editorial Correction
+
+• Section 16 repository folder structure aligned with MC-000 Repository Index v2.2.0
 
 ============================================================
 20. MASTER CONTEXT FREEZE DECLARATION

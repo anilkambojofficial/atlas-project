@@ -7,7 +7,7 @@
 | Field | Value |
 |--------|--------|
 | Document Title | Project Manifest — Repository Constitution |
-| Version | 1.0.0 |
+| Version | 1.1.0 |
 | Status | Active |
 | Repository | Project ATLAS Engineering Repository |
 | Owner | Repository Maintainer |
@@ -65,21 +65,25 @@ Derived from MC-004 and BP-000:
 
 ## 4. Repository Structure
 
-The repository structure is fixed and defined by the approved architecture (README, BP-000). No new top-level folders may be added without formal approval.
+The repository structure is fixed and defined by the approved repository index (MC-000). No new top-level folders may be added without formal approval.
 
 ```
 00_Master_Context           Master context documents and repository index
 01_Architecture             System architecture and design decisions
 02_Domains                  Domain models and bounded contexts
-03_Engineering_Standards    Coding standards, conventions, and guidelines
+03_Engineering_Standards    Engineering standards, conventions, and guidelines
 04_Build_Packs              Build pack specifications
-05_Implementation_Packs     Implementation pack specifications
-06_API                      API contracts and specifications
-07_Database                 Database schemas and migration plans
-08_UI_UX                    UI/UX specifications and design assets
-09_Testing                  Testing strategies and test plans
-10_Deployment               Deployment procedures and infrastructure
-99_Assets                   Repository assets
+05_Reference_Architecture   Reference implementation blueprints
+06_Implementation_Packs     Implementation pack specifications
+07_ADRs                     Architecture Decision Records
+08_Templates                Repository document templates
+09_Assets                   Repository assets
+10_API                      API contracts and specifications
+11_Database                 Database schemas and migration plans
+12_UI_UX                    UI/UX specifications and design assets
+13_Testing                  Testing strategies and test plans
+14_Deployment               Deployment procedures and infrastructure
+99_Reference                Reference materials
 docs                        Supplementary documentation
 ```
 
@@ -99,6 +103,8 @@ Architecture Documents
 Domain Documents
         ↓
 Engineering Standards
+        ↓
+Reference Architecture Documents
         ↓
 Build Packs
         ↓
@@ -207,7 +213,7 @@ Every significant business or technical decision shall be documented (MC-004, De
 - Approval Authority
 - Decision Date
 
-Project ATLAS values traceability over undocumented assumptions. Architecture and design decisions are stored under `01_Architecture`.
+Project ATLAS values traceability over undocumented assumptions. Architecture Decision Records are stored under `07_ADRs`; architecture documents are stored under `01_Architecture`.
 
 ---
 
@@ -238,7 +244,7 @@ AI must never become an exception to engineering discipline.
 
 Derived from BP-000 (Coding Rules) and MC-004 (Architecture Governance):
 
-1. Documentation is authored and approved first (Master Context → Architecture → Domains → Engineering Standards → Build Packs → Implementation Packs).
+1. Documentation is authored and approved first (Master Context → Architecture → Domains → Engineering Standards → Reference Architecture → Build Packs → Implementation Packs).
 2. Implementation begins only after the required Build Packs are complete.
 3. No production code without approved engineering documentation.
 4. No undocumented feature may enter production.
@@ -365,6 +371,7 @@ Derived from MC-001 and MC-004 (Architecture Freeze Declarations and Document Li
 | Version | Date | Description |
 |---------|------|-------------|
 | 1.0.0 | 2026-07-07 | Initial release of PROJECT_MANIFEST.md — repository constitution summarizing approved governance from the MC Series, README, and BP-000. |
+| 1.1.0 | 2026-07-07 | Repository finalization — updated repository structure to the final sequential folder numbering (MC-000 v2.2.0), inserted the Reference Architecture layer into the documentation hierarchy and engineering workflow, and updated the ADR storage location to 07_ADRs. |
 
 ---
 

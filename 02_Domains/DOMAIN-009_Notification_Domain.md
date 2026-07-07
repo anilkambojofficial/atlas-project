@@ -5,7 +5,7 @@ DOMAIN
 
 Document ID      : DOMAIN-009
 Document Title   : Notification Domain
-Version          : 1.0.0
+Version          : 1.0.1
 Status           : Draft (Architecture Review)
 Document Owner   : Chief Communication Architecture Office
 Product Owner    : Anil Kumar
@@ -801,6 +801,14 @@ Major Deliverables
 • Domain Events
 • Business Rules
 
+------------------------------------------------------------
+
+Version 1.0.1
+
+Editorial Correction
+
+• Corrected Build Pack cross-reference to the frozen numbering (BP-011 Notification)
+
 ============================================================
 25. CROSS REFERENCES
 ============================================================
@@ -824,7 +832,7 @@ Future Related Documents
 
 • DOMAIN-010 AI Domain
 
-• BP-010 Notification
+• BP-011 Notification
 
 • ES-005 AI Engineering Standards
 

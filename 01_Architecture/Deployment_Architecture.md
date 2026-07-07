@@ -5,7 +5,7 @@ ARCHITECTURE
 
 Document ID      : ARCH-007
 Document Title   : Deployment Architecture
-Version          : 1.0.0
+Version          : 1.0.1
 Status           : Draft (Architecture Review)
 Document Owner   : Chief Infrastructure Architecture Office
 Product Owner    : Anil Kumar
@@ -851,6 +851,14 @@ Major Deliverables
 • High Availability
 • Deployment Governance
 
+------------------------------------------------------------
+
+Version 1.0.1
+
+Editorial Correction
+
+• Aligned Engineering Standards cross-references with the approved ES series (ES-006 DevOps Standards, ES-007 Testing Standards)
+
 ============================================================
 28. CROSS REFERENCES
 ============================================================
@@ -869,7 +877,7 @@ Future Related Documents
 
 • ARCH-008 Non-Functional Architecture
 • ES-006 DevOps Standards
-• ES-007 Deployment Standards
+• ES-007 Testing Standards
 • BP-012 Deployment Pipeline
 
 ============================================================

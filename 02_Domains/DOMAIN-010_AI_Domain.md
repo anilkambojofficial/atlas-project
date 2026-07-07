@@ -5,7 +5,7 @@ DOMAIN
 
 Document ID      : DOMAIN-010
 Document Title   : AI Domain
-Version          : 1.0.0
+Version          : 1.0.1
 Status           : Draft (Architecture Review)
 Document Owner   : Chief AI Architecture Office
 Product Owner    : Anil Kumar
@@ -373,31 +373,7 @@ Prompt versions shall be version-controlled and auditable.
 
 AI Memory shall persist organizational context.
 
-Memory Layers
-
-Organization Memory
-
-• Policies
-• Standards
-• Enterprise Knowledge
-
-Project Memory
-
-• Active Projects
-• Decisions
-• Meeting History
-
-User Memory
-
-• Preferences
-• Working Style
-• Frequently Accessed Knowledge
-
-Conversation Memory
-
-• Current Session
-• Recent Context
-• Temporary State
+Memory layers follow the Canonical Enterprise Memory Taxonomy defined in ARCH-003 Section 12.
 
 Memory shall respect Organization and User permissions.
 
@@ -898,6 +874,16 @@ Major Deliverables
 • AI Observability
 • Domain Events
 
+------------------------------------------------------------
+
+Version 1.0.1
+
+Editorial Correction
+
+• Corrected Build Pack cross-reference to the frozen numbering (BP-005 AI Platform)
+
+• Section 9 now references the Canonical Enterprise Memory Taxonomy defined in ARCH-003 Section 12
+
 ============================================================
 26. CROSS REFERENCES
 ============================================================
@@ -931,7 +917,7 @@ Future Related Documents
 • ES-004 Security Standards
 • ES-005 AI Engineering Standards
 
-• BP-011 AI Foundation
+• BP-005 AI Platform
 
 ============================================================
 27. DOMAIN FREEZE DECLARATION

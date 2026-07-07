@@ -12,7 +12,7 @@
 |--------|--------|
 | Document ID | BP-000 |
 | Title | Engineering Foundation |
-| Version | 1.0.0 |
+| Version | 1.0.1 |
 | Status | Approved |
 | Repository | Project ATLAS |
 | Owner | Anil Kumar |
@@ -124,29 +124,9 @@ Engineering commits must remain atomic.
 
 # Repository Structure
 
-00_Master_Context
+The authoritative repository structure is maintained in `00_Master_Context/MC-000_Repository_Index.md`.
 
-01_Architecture
-
-02_Domains
-
-03_Engineering_Standards
-
-04_Build_Packs
-
-05_Implementation_Packs
-
-06_API
-
-07_Database
-
-08_UI_UX
-
-09_Testing
-
-10_Deployment
-
-99_Assets
+The structure listing previously maintained in this section is superseded by MC-000 v2.2.0.
 
 ---
 
@@ -171,6 +151,13 @@ None
 # Next Build Pack
 
 BP-001 — Product Foundation
+
+---
+
+# Version History
+
+- 1.0.0 — Initial approved Build Pack.
+- 1.0.1 — Editorial correction: repository structure section superseded by MC-000 Repository Index v2.2.0.
 
 ---
 

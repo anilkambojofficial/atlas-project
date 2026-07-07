@@ -5,7 +5,7 @@ DOMAIN
 
 Document ID      : DOMAIN-005
 Document Title   : Knowledge Domain
-Version          : 1.0.0
+Version          : 1.0.1
 Status           : Draft (Architecture Review)
 Document Owner   : Chief Knowledge Architecture Office
 Product Owner    : Anil Kumar
@@ -581,25 +581,7 @@ The Knowledge Graph shall continuously evolve as organizational knowledge grows.
 
 Project ATLAS shall maintain persistent AI Memory.
 
-Memory Types
-
-Organization Memory
-
-• Enterprise-wide knowledge
-
-Project Memory
-
-• Project-specific knowledge
-
-Meeting Memory
-
-• Conversation context
-
-User Memory
-
-• User preferences
-• Working patterns
-• Frequently accessed knowledge
+Memory layers follow the Canonical Enterprise Memory Taxonomy defined in ARCH-003 Section 12.
 
 AI Memory Principles
 
@@ -868,6 +850,14 @@ Major Deliverables
 • RAG Integration
 • Knowledge Governance
 • Domain Events
+
+------------------------------------------------------------
+
+Version 1.0.1
+
+Editorial Correction
+
+• Section 15 now references the Canonical Enterprise Memory Taxonomy defined in ARCH-003 Section 12
 
 ============================================================
 25. CROSS REFERENCES

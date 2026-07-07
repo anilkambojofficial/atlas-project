@@ -5,7 +5,7 @@ ARCHITECTURE
 
 Document ID      : ARCH-003
 Document Title   : AI Architecture
-Version          : 1.0.0
+Version          : 1.1.0
 Status           : Draft (Architecture Review)
 Document Owner   : Chief AI Architecture Office
 Product Owner    : Anil Kumar
@@ -454,23 +454,62 @@ The relational database remains the authoritative source of business data.
 12. AI MEMORY MODEL
 ============================================================
 
-Project ATLAS distinguishes between multiple types of memory.
+Project ATLAS defines the Canonical Enterprise Memory Taxonomy.
+
+This taxonomy is the single authoritative memory model of the platform.
+
+All Domain documents and Engineering Standards shall reference this taxonomy rather than defining independent memory models.
 
 ------------------------------------------------------------
-Short-Term Memory
+Persistent Business Memory
 ------------------------------------------------------------
 
-Maintains context during an active AI interaction.
+Organization Memory
+
+Persistent enterprise knowledge.
 
 Examples
 
-• Current conversation
-• Current meeting
-• Current task
+• Policies
+• Standards
+• SOPs
+• Decisions
+• Knowledge Articles
+• Meeting Outcomes
+
+Project Memory
+
+Project-scoped knowledge.
+
+Examples
+
+• Active Projects
+• Decisions
+• Meeting History
+
+Team Memory
+
+Team-scoped operational knowledge.
+
+User Memory
+
+User-scoped context.
+
+Examples
+
+• Preferences
+• Working Patterns
+• Frequently Accessed Knowledge
 
 ------------------------------------------------------------
-Session Memory
+Interaction Memory
 ------------------------------------------------------------
+
+Workflow Memory
+
+State of active AI workflows.
+
+Session Memory
 
 Maintains context across a user session.
 
@@ -479,18 +518,19 @@ Examples
 • Recently viewed projects
 • Recent AI conversations
 
-------------------------------------------------------------
-Organizational Memory
-------------------------------------------------------------
+Conversation Memory
 
-Persistent enterprise knowledge.
+Maintains short-term context during an active AI interaction.
 
 Examples
 
-• SOPs
-• Decisions
-• Knowledge Articles
-• Meeting Outcomes
+• Current conversation
+• Current meeting
+• Current task
+
+------------------------------------------------------------
+
+All memory layers shall remain permission-aware, tenant-isolated, versioned where applicable, searchable, explainable, and auditable.
 
 The AI system shall retrieve memory as required rather than relying solely on prompt history.
 
@@ -948,6 +988,16 @@ Major Deliverables
 • AI Safety & Guardrails
 • AI Observability
 • AI Governance
+
+------------------------------------------------------------
+
+Version 1.1.0
+
+Repository Stabilization
+
+• Consolidated the Canonical Enterprise Memory Taxonomy in Section 12
+
+• Established ARCH-003 Section 12 as the single authoritative memory model referenced by DOMAIN-005, DOMAIN-010, and ES-005
 
 ============================================================
 29. ARCHITECTURE FREEZE DECLARATION

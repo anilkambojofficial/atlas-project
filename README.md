@@ -12,20 +12,27 @@ The repository reflects approved documents only. It does not generate product vi
 00_Master_Context           Master context documents and repository index
 01_Architecture             System architecture and design decisions
 02_Domains                  Domain models and bounded contexts
-03_Engineering_Standards    Coding standards, conventions, and guidelines
+03_Engineering_Standards    Engineering standards, conventions, and guidelines
 04_Build_Packs              Build pack specifications
-05_Implementation_Packs     Implementation pack specifications
-06_API                      API contracts and specifications
-07_Database                 Database schemas and migration plans
-08_UI_UX                    UI/UX specifications and design assets
-09_Testing                  Testing strategies and test plans
-10_Deployment               Deployment procedures and infrastructure
+05_Reference_Architecture   Reference implementation blueprints
+06_Implementation_Packs     Implementation pack specifications
+07_ADRs                     Architecture Decision Records
+08_Templates                Repository document templates
+09_Assets                   Repository assets
+10_API                      API contracts and specifications
+11_Database                 Database schemas and migration plans
+12_UI_UX                    UI/UX specifications and design assets
+13_Testing                  Testing strategies and test plans
+14_Deployment               Deployment procedures and infrastructure
+99_Reference                Reference materials
 docs                        Supplementary documentation
 ```
 
+The authoritative repository structure and navigation index is `00_Master_Context/MC-000_Repository_Index.md`.
+
 ## Current Status
 
-Engineering Initialization. Repository Version 0.1.0.
+Documentation Foundation — Reference Architecture Phase Preparation. Repository Version 0.2.0 (see `VERSION.md`).
 
 ## Documentation Workflow
 
