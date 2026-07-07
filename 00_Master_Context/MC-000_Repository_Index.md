@@ -5,7 +5,7 @@ MASTER CONTEXT
 
 Document ID      : MC-000
 Document Title   : Repository Index
-Version          : 2.3.0
+Version          : 2.4.0
 Status           : Draft (Architecture Review)
 Document Owner   : Chief Architecture Office
 Product Owner    : Anil Kumar
@@ -711,13 +711,17 @@ Draft (Engineering Review)
 
 ------------------------------------------------------------
 
-Planned Build Packs
-
 BP-003
 
-Planned
+Identity & Access Platform
+
+Status
+
+Draft (Engineering Review)
 
 ------------------------------------------------------------
+
+Planned Build Packs
 
 BP-004
 
@@ -940,7 +944,7 @@ Draft (Architecture Review)
 
 Build Packs
 
-3 Registered (BP-000 Approved, BP-001 Approved, BP-002 Draft (Engineering Review)), 10 Planned
+4 Registered (BP-000 Approved, BP-001 Approved, BP-002 Draft (Engineering Review), BP-003 Draft (Engineering Review)), 9 Planned
 
 13 Documents
 
@@ -1157,6 +1161,22 @@ Reference Architecture Baseline and First Platform Build Pack
 • Retired legacy placeholder titles for BP-003 through BP-012; retained as Planned entries pending authoring
 
 • Updated Repository Statistics to reflect 12 Reference Architecture documents and 3 registered Build Packs
+
+------------------------------------------------------------
+
+Version 2.4.0
+
+Identity & Access Platform Build Pack Registered
+
+• Registered BP-003 Identity & Access Platform (Status: Draft (Engineering Review))
+
+• Removed BP-003 from Planned Build Packs list
+
+• Updated Repository Statistics to reflect 4 registered Build Packs and 9 Planned Build Packs
+
+• Aligned with BP-ROADMAP.md v1.0.0 sequencing
+
+• No architectural or functional changes; registration-level update only
 
 ============================================================
 REPOSITORY FREEZE DECLARATION

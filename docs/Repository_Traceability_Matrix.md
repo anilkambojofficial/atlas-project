@@ -5,7 +5,7 @@ REPOSITORY TRACEABILITY MATRIX
 
 Document ID      : RTM-001
 Document Title   : Repository Traceability Matrix
-Version          : 1.2.1
+Version          : 1.3.0
 Status           : Draft
 Document Owner   : Chief Architecture Office
 Product Owner    : Anil Kumar
@@ -1100,6 +1100,52 @@ Platform Capabilities
 
 Implementation Packs
 
+------------------------------------------------------------
+
+BP-003
+
+Identity & Access Platform
+
+↓
+
+ARCH-005 Security Architecture
+
+↓
+
+ARCH-002 Multi-Tenant Architecture
+
+↓
+
+DOMAIN-002 Identity & User Domain
+
+↓
+
+ES-004 Security Standards
+
+↓
+
+RA-011 Security Reference Architecture
+
+↓
+
+RA-009 Multi-Tenant Reference Architecture
+
+↓
+
+RA-001 Backend Reference Architecture
+
+↓
+
+RA-007 AI Agent Runtime Reference Architecture
+
+↓
+
+Identity, Authentication, Authorization, Session, Token, Federation, Tenant Binding, Audit Capabilities
+
+↓
+
+Implementation Packs
+
 ============================================================
 IMPLEMENTATION TRACEABILITY
 ============================================================
@@ -1439,6 +1485,18 @@ Editorial Alignment
 • Removed retired legacy placeholder Build Pack names from the ES-001 example
 
 • No architectural or functional changes; editorial patch only
+
+------------------------------------------------------------
+
+Version 1.3.0
+
+Identity & Access Platform Build Pack Traceability Registered
+
+• Added BP-003 Identity & Access Platform traceability entry under Registered Build Packs
+
+• Established explicit BP-003 traceability chain: ARCH-005 → ARCH-002 → DOMAIN-002 → ES-004 → RA-011 → RA-009 → RA-001 → RA-007 → Identity Capabilities → Implementation Packs
+
+• No architectural or functional changes; registration-level update only
 
 ============================================================
 DOCUMENT FREEZE DECLARATION

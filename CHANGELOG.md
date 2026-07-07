@@ -1,3 +1,12 @@
+Version 0.4.0
+Identity & Access Platform Build Pack Registered.
+
+- Added BP-003 Identity & Access Platform (Draft (Engineering Review)) — second platform Build Pack, includes Build Pack Objectives, Identity Trust Boundary (5 boundaries), Identity Lifecycle (11 stages), Platform Context Diagram, Service Inventory (13 services covering Human/Machine/Agent identity classes), Required Databases (6), Required Events (8 categories), Implementation Readiness Matrix (13 capabilities), Traceability Matrix (33 rows), Engineering Decisions Register (14 decisions)
+- Updated MC-000 Repository Index to v2.4.0 — registered BP-003 Identity & Access Platform, removed BP-003 from Planned list, refreshed Repository Statistics (4 registered Build Packs, 9 Planned)
+- Updated RTM-001 Repository Traceability Matrix to v1.3.0 — added BP-003 explicit traceability chain (ARCH-005 → ARCH-002 → DOMAIN-002 → ES-004 → RA-011 → RA-009 → RA-001 → RA-007 → Identity Capabilities)
+- Aligned with BP-ROADMAP.md v1.0.0 sequencing
+- No architectural or functional changes to existing artifacts; registration-level updates only
+
 Version 0.3.0
 Reference Architecture Baseline Complete and Build Pack Phase Initiated.
 
