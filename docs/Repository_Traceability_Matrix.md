@@ -5,7 +5,7 @@ REPOSITORY TRACEABILITY MATRIX
 
 Document ID      : RTM-001
 Document Title   : Repository Traceability Matrix
-Version          : 1.5.0
+Version          : 1.6.0
 Status           : Draft
 Document Owner   : Chief Architecture Office
 Product Owner    : Anil Kumar
@@ -1266,6 +1266,64 @@ AI Gateway, Orchestrator, Prompt Registry, Model Registry, Context Service, Agen
 
 Implementation Packs
 
+------------------------------------------------------------
+
+BP-006
+
+Knowledge Platform
+
+↓
+
+ARCH-002 Data Architecture
+
+↓
+
+ARCH-003 AI Architecture
+
+↓
+
+ARCH-005 Security Architecture
+
+↓
+
+ARCH-008 Non-Functional Architecture
+
+↓
+
+DOMAIN-005 Knowledge Domain
+
+↓
+
+ES-005 AI Engineering Standards
+
+↓
+
+ES-004 Security Engineering Standards
+
+↓
+
+RA-005 Data Platform Reference Architecture
+
+↓
+
+RA-008 RAG Platform Reference Architecture
+
+↓
+
+RA-011 Security Reference Architecture
+
+↓
+
+RA-010 Observability & Operations Reference Architecture
+
+↓
+
+Knowledge Repository, Document Repository, Metadata, Chunk, Embedding, Vector Repository, Hybrid Retrieval, Citation, Governance, Audit, Quality Capabilities
+
+↓
+
+Implementation Packs
+
 ============================================================
 IMPLEMENTATION TRACEABILITY
 ============================================================
@@ -1639,6 +1697,18 @@ AI Platform Build Pack Traceability Registered
 • Added BP-005 AI Platform traceability entry under Registered Build Packs
 
 • Established explicit BP-005 traceability chain: ARCH-003 → ARCH-005 → ARCH-006 → ARCH-008 → DOMAIN-010 → ES-005 → ES-004 → RA-003 → RA-007 → RA-008 → RA-011 → RA-010 → AI Platform Capabilities → Implementation Packs
+
+• No architectural or functional changes; registration-level update only
+
+------------------------------------------------------------
+
+Version 1.6.0
+
+Knowledge Platform Build Pack Traceability Registered
+
+• Added BP-006 Knowledge Platform traceability entry under Registered Build Packs
+
+• Established explicit BP-006 traceability chain: ARCH-002 → ARCH-003 → ARCH-005 → ARCH-008 → DOMAIN-005 → ES-005 → ES-004 → RA-005 → RA-008 → RA-011 → RA-010 → Knowledge Platform Capabilities → Implementation Packs
 
 • No architectural or functional changes; registration-level update only
 

@@ -1,3 +1,12 @@
+Version 0.7.0
+Knowledge Platform Build Pack Registered.
+
+- Added BP-006 Knowledge Platform (Draft (Engineering Review)) — canonical enterprise knowledge foundation, includes Purpose, Scope, Dependencies, Build Pack Objectives, Knowledge Capability Map (13 capabilities), Platform Context, Knowledge Responsibilities, Platform Components (Knowledge Foundation / Knowledge Processing / Retrieval Platform / Governance Platform), Repository Mapping, Service Inventory (12 services covering Knowledge Repository, Document Repository, Metadata, Knowledge Processing, Chunk Management, Embedding Pipeline, Vector Repository, Hybrid Retrieval, Citation, Governance, Audit, Quality), Required APIs (10), Required Databases (8), Required Events (10), Required Configuration (12), Knowledge Processing Pipeline (10 stages), Knowledge Retrieval Pipeline (10 stages), Security Requirements, Knowledge Governance (Lifecycle, Classification, Ownership), Knowledge Quality, Observability, Deployment Requirements, Testing Requirements
+- Updated MC-000 Repository Index to v2.7.0 — registered BP-006 Knowledge Platform, removed BP-006 from Planned list, refreshed Repository Statistics (7 registered Build Packs, 6 Planned)
+- Updated RTM-001 Repository Traceability Matrix to v1.6.0 — added BP-006 explicit traceability chain (ARCH-002 → ARCH-003 → ARCH-005 → ARCH-008 → DOMAIN-005 → ES-005 → ES-004 → RA-005 → RA-008 → RA-011 → RA-010 → Knowledge Platform Capabilities)
+- Aligned with BP-ROADMAP.md v1.0.0 sequencing
+- No architectural or functional changes to existing artifacts; registration-level updates only
+
 Version 0.6.0
 AI Platform Build Pack Registered.
 

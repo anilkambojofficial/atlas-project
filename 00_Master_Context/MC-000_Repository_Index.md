@@ -5,7 +5,7 @@ MASTER CONTEXT
 
 Document ID      : MC-000
 Document Title   : Repository Index
-Version          : 2.6.0
+Version          : 2.7.0
 Status           : Draft (Architecture Review)
 Document Owner   : Chief Architecture Office
 Product Owner    : Anil Kumar
@@ -741,13 +741,17 @@ Draft (Engineering Review)
 
 ------------------------------------------------------------
 
-Planned Build Packs
-
 BP-006
 
-Planned
+Knowledge Platform
+
+Status
+
+Draft (Engineering Review)
 
 ------------------------------------------------------------
+
+Planned Build Packs
 
 BP-007
 
@@ -952,7 +956,7 @@ Draft (Architecture Review)
 
 Build Packs
 
-6 Registered (BP-000 Approved, BP-001 Approved, BP-002 Draft (Engineering Review), BP-003 Draft (Engineering Review), BP-004 Draft (Engineering Review), BP-005 Draft (Engineering Review)), 7 Planned
+7 Registered (BP-000 Approved, BP-001 Approved, BP-002 Draft (Engineering Review), BP-003 Draft (Engineering Review), BP-004 Draft (Engineering Review), BP-005 Draft (Engineering Review), BP-006 Draft (Engineering Review)), 6 Planned
 
 13 Documents
 
@@ -1213,6 +1217,22 @@ AI Platform Build Pack Registered
 • Removed BP-005 from Planned Build Packs list
 
 • Updated Repository Statistics to reflect 6 registered Build Packs and 7 Planned Build Packs
+
+• Aligned with BP-ROADMAP.md v1.0.0 sequencing
+
+• No architectural or functional changes; registration-level update only
+
+------------------------------------------------------------
+
+Version 2.7.0
+
+Knowledge Platform Build Pack Registered
+
+• Registered BP-006 Knowledge Platform (Status: Draft (Engineering Review))
+
+• Removed BP-006 from Planned Build Packs list
+
+• Updated Repository Statistics to reflect 7 registered Build Packs and 6 Planned Build Packs
 
 • Aligned with BP-ROADMAP.md v1.0.0 sequencing
 
