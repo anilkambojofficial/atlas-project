@@ -5,7 +5,7 @@ REPOSITORY TRACEABILITY MATRIX
 
 Document ID      : RTM-001
 Document Title   : Repository Traceability Matrix
-Version          : 1.2.0
+Version          : 1.2.1
 Status           : Draft
 Document Owner   : Chief Architecture Office
 Product Owner    : Anil Kumar
@@ -676,15 +676,15 @@ Engineering Standards
 
 ↓
 
-BP-001 Authentication
+BP-000 Engineering Foundation
 
 ↓
 
-BP-002 Organization
+BP-001 Product Foundation
 
 ↓
 
-BP-003 Identity
+BP-002 Platform Foundation
 
 ------------------------------------------------------------
 
@@ -1427,6 +1427,18 @@ Reference Architecture Completion and Build Pack Registration
 • Added Registered Build Packs subsection with explicit BP-000, BP-001, BP-002 traceability
 
 • No architectural or functional changes; registration-level updates only
+
+------------------------------------------------------------
+
+Version 1.2.1
+
+Editorial Alignment
+
+• Updated ES-001 illustrative example to reference authoritative Build Pack titles (BP-000 Engineering Foundation, BP-001 Product Foundation, BP-002 Platform Foundation)
+
+• Removed retired legacy placeholder Build Pack names from the ES-001 example
+
+• No architectural or functional changes; editorial patch only
 
 ============================================================
 DOCUMENT FREEZE DECLARATION
