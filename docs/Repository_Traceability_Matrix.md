@@ -5,11 +5,12 @@ REPOSITORY TRACEABILITY MATRIX
 
 Document ID      : RTM-001
 Document Title   : Repository Traceability Matrix
-Version          : 1.1.0
+Version          : 1.2.0
 Status           : Draft
 Document Owner   : Chief Architecture Office
 Product Owner    : Anil Kumar
 Repository Path  : docs/Repository_Traceability_Matrix.md
+Last Updated     : 2026-07-08
 
 ============================================================
 DOCUMENT PURPOSE
@@ -883,7 +884,7 @@ Storage Services
 
 RA-006
 
-Event-Driven Architecture Reference
+Event-Driven Reference Architecture
 
 ↓
 
@@ -897,7 +898,7 @@ Domain Events
 
 RA-007
 
-AI Agent Runtime Reference
+AI Agent Runtime Reference Architecture
 
 ↓
 
@@ -911,7 +912,7 @@ Agent Registry
 
 RA-008
 
-RAG Platform Reference
+RAG Platform Reference Architecture
 
 ↓
 
@@ -925,7 +926,7 @@ Vector Storage
 
 RA-009
 
-Multi-Tenant Reference
+Multi-Tenant Reference Architecture
 
 ↓
 
@@ -939,7 +940,7 @@ Organization Provisioning
 
 RA-010
 
-Observability & Operations Reference
+Observability & Operations Reference Architecture
 
 ↓
 
@@ -948,6 +949,50 @@ Monitoring
 ↓
 
 Operations
+
+------------------------------------------------------------
+
+RA-011
+
+Security Reference Architecture
+
+↓
+
+Identity & Access
+
+↓
+
+Zero Trust Enforcement
+
+↓
+
+Encryption & Secrets
+
+↓
+
+Security Standards
+
+------------------------------------------------------------
+
+RA-012
+
+Integration Reference Architecture
+
+↓
+
+API Gateway
+
+↓
+
+Webhook Framework
+
+↓
+
+Connector Framework
+
+↓
+
+AI Provider Integrations
 
 ============================================================
 BUILD PACK TRACEABILITY
@@ -988,6 +1033,72 @@ Every Build Pack shall reference:
 • Architecture
 
 • Engineering Standards
+
+Registered Build Packs
+
+BP-000
+
+Engineering Foundation
+
+↓
+
+Repository Governance
+
+↓
+
+Build Pack Format
+
+↓
+
+Traceability Rules
+
+------------------------------------------------------------
+
+BP-001
+
+Product Foundation
+
+↓
+
+MC-001 Vision
+
+↓
+
+MC-002 Product Foundation
+
+↓
+
+MC-003 Product Scope
+
+↓
+
+Product Domains
+
+------------------------------------------------------------
+
+BP-002
+
+Platform Foundation
+
+↓
+
+ARCH-001 through ARCH-008
+
+↓
+
+Engineering Standards ES-001 through ES-007
+
+↓
+
+Reference Architecture RA-001 through RA-012
+
+↓
+
+Platform Capabilities
+
+↓
+
+Implementation Packs
 
 ============================================================
 IMPLEMENTATION TRACEABILITY
@@ -1300,6 +1411,22 @@ Repository Stabilization
 • Updated repository hierarchy levels
 
 • Editorial alignment of ES-001 and ES-005 titles
+
+------------------------------------------------------------
+
+Version 1.2.0
+
+Reference Architecture Completion and Build Pack Registration
+
+• Added RA-011 Security Reference Architecture to Reference Architecture Traceability
+
+• Added RA-012 Integration Reference Architecture to Reference Architecture Traceability
+
+• Corrected RA-006 through RA-010 title strings to authoritative "Reference Architecture" form
+
+• Added Registered Build Packs subsection with explicit BP-000, BP-001, BP-002 traceability
+
+• No architectural or functional changes; registration-level updates only
 
 ============================================================
 DOCUMENT FREEZE DECLARATION

@@ -5,11 +5,12 @@ MASTER CONTEXT
 
 Document ID      : MC-000
 Document Title   : Repository Index
-Version          : 2.2.0
+Version          : 2.3.0
 Status           : Draft (Architecture Review)
 Document Owner   : Chief Architecture Office
 Product Owner    : Anil Kumar
 Repository Path  : 00_Master_Context/MC-000_Repository_Index.md
+Last Updated     : 2026-07-08
 
 ============================================================
 DOCUMENT PURPOSE
@@ -552,11 +553,15 @@ REFERENCE ARCHITECTURE DOCUMENTS
 
 The Reference Architecture Layer translates approved Architecture, Domain, and Engineering Standard documents into reference implementation blueprints.
 
-Planned Documents
+Registered Documents
 
 RA-001
 
 Backend Reference Architecture
+
+Status
+
+Draft (Architecture Review)
 
 ------------------------------------------------------------
 
@@ -564,11 +569,19 @@ RA-002
 
 Frontend Reference Architecture
 
+Status
+
+Draft (Architecture Review)
+
 ------------------------------------------------------------
 
 RA-003
 
 AI Platform Reference Architecture
+
+Status
+
+Draft (Architecture Review)
 
 ------------------------------------------------------------
 
@@ -576,45 +589,89 @@ RA-004
 
 Infrastructure Reference Architecture
 
+Status
+
+Draft (Architecture Review)
+
 ------------------------------------------------------------
 
 RA-005
 
 Data Platform Reference Architecture
 
+Status
+
+Draft (Architecture Review)
+
 ------------------------------------------------------------
 
 RA-006
 
-Event-Driven Architecture Reference
+Event-Driven Reference Architecture
+
+Status
+
+Draft (Architecture Review)
 
 ------------------------------------------------------------
 
 RA-007
 
-AI Agent Runtime Reference
+AI Agent Runtime Reference Architecture
+
+Status
+
+Draft (Architecture Review)
 
 ------------------------------------------------------------
 
 RA-008
 
-RAG Platform Reference
+RAG Platform Reference Architecture
+
+Status
+
+Draft (Architecture Review)
 
 ------------------------------------------------------------
 
 RA-009
 
-Multi-Tenant Reference
+Multi-Tenant Reference Architecture
+
+Status
+
+Draft (Architecture Review)
 
 ------------------------------------------------------------
 
 RA-010
 
-Observability & Operations Reference
+Observability & Operations Reference Architecture
 
 Status
 
-Planned
+Draft (Architecture Review)
+
+------------------------------------------------------------
+
+RA-011
+
+Security Reference Architecture
+
+Status
+
+Draft (Architecture Review)
+
+------------------------------------------------------------
+
+RA-012
+
+Integration Reference Architecture
+
+Status
+
+Draft (Architecture Review)
 
 ============================================================
 BUILD PACKS
@@ -622,11 +679,11 @@ BUILD PACKS
 
 Build Packs define the implementation roadmap.
 
-Repository Governance
+Registered Build Packs
 
 BP-000
 
-Build Pack Governance
+Engineering Foundation
 
 Status
 
@@ -634,59 +691,87 @@ Approved
 
 ------------------------------------------------------------
 
-Implementation Build Packs
-
 BP-001
 
-Authentication
-
-BP-002
-
-Organization
-
-BP-003
-
-Identity
-
-BP-004
-
-Meeting
-
-BP-005
-
-AI Platform
-
-BP-006
-
-Knowledge
-
-BP-007
-
-Decision
-
-BP-008
-
-SOP
-
-BP-009
-
-Action
-
-BP-010
-
-Integration
-
-BP-011
-
-Notification
-
-BP-012
-
-Analytics
+Product Foundation
 
 Status
 
+Approved
+
+------------------------------------------------------------
+
+BP-002
+
+Platform Foundation
+
+Status
+
+Draft (Engineering Review)
+
+------------------------------------------------------------
+
+Planned Build Packs
+
+BP-003
+
 Planned
+
+------------------------------------------------------------
+
+BP-004
+
+Planned
+
+------------------------------------------------------------
+
+BP-005
+
+Planned
+
+------------------------------------------------------------
+
+BP-006
+
+Planned
+
+------------------------------------------------------------
+
+BP-007
+
+Planned
+
+------------------------------------------------------------
+
+BP-008
+
+Planned
+
+------------------------------------------------------------
+
+BP-009
+
+Planned
+
+------------------------------------------------------------
+
+BP-010
+
+Planned
+
+------------------------------------------------------------
+
+BP-011
+
+Planned
+
+------------------------------------------------------------
+
+BP-012
+
+Planned
+
+Planned Build Pack titles shall be established at authoring time in accordance with the Reference Architecture and Domain layers. Placeholder titles from prior repository versions are no longer authoritative.
 
 ============================================================
 IMPLEMENTATION PACKS
@@ -849,13 +934,13 @@ Completed
 
 Reference Architecture
 
-Planned
+Draft (Architecture Review)
 
-10 Documents
+12 Documents
 
 Build Packs
 
-Planned
+3 Registered (BP-000 Approved, BP-001 Approved, BP-002 Draft (Engineering Review)), 10 Planned
 
 13 Documents
 
@@ -1040,6 +1125,38 @@ Repository Finalization
 • Assets renumbered to 09_Assets
 
 • Specification folders renumbered to 10_API, 11_Database, 12_UI_UX, 13_Testing, 14_Deployment
+
+------------------------------------------------------------
+
+Version 2.3.0
+
+Reference Architecture Baseline and First Platform Build Pack
+
+• Registered RA-011 Security Reference Architecture
+
+• Registered RA-012 Integration Reference Architecture
+
+• Corrected RA-006 title to "Event-Driven Reference Architecture"
+
+• Corrected RA-007 title to "AI Agent Runtime Reference Architecture"
+
+• Corrected RA-008 title to "RAG Platform Reference Architecture"
+
+• Corrected RA-009 title to "Multi-Tenant Reference Architecture"
+
+• Corrected RA-010 title to "Observability & Operations Reference Architecture"
+
+• Reclassified RA-001 through RA-010 from Planned to Draft (Architecture Review)
+
+• Reconciled BP-000 title to "Engineering Foundation" (authoritative source: BP-000 file)
+
+• Reconciled BP-001 title to "Product Foundation" (authoritative source: BP-001 file)
+
+• Registered BP-002 Platform Foundation (Status: Draft (Engineering Review))
+
+• Retired legacy placeholder titles for BP-003 through BP-012; retained as Planned entries pending authoring
+
+• Updated Repository Statistics to reflect 12 Reference Architecture documents and 3 registered Build Packs
 
 ============================================================
 REPOSITORY FREEZE DECLARATION
