@@ -5,7 +5,7 @@ REPOSITORY TRACEABILITY MATRIX
 
 Document ID      : RTM-001
 Document Title   : Repository Traceability Matrix
-Version          : 1.4.0
+Version          : 1.5.0
 Status           : Draft
 Document Owner   : Chief Architecture Office
 Product Owner    : Anil Kumar
@@ -1204,6 +1204,68 @@ Tenant Registry, Lifecycle, Directory, Subscription, Entitlement, Configuration,
 
 Implementation Packs
 
+------------------------------------------------------------
+
+BP-005
+
+AI Platform
+
+↓
+
+ARCH-003 AI Architecture
+
+↓
+
+ARCH-005 Security Architecture
+
+↓
+
+ARCH-006 Integration Architecture
+
+↓
+
+ARCH-008 Non-Functional Architecture
+
+↓
+
+DOMAIN-010 AI Domain
+
+↓
+
+ES-005 AI Engineering Standards
+
+↓
+
+ES-004 Security Engineering Standards
+
+↓
+
+RA-003 AI Platform Reference Architecture
+
+↓
+
+RA-007 AI Agent Runtime Reference Architecture
+
+↓
+
+RA-008 RAG Platform Reference Architecture
+
+↓
+
+RA-011 Security Reference Architecture
+
+↓
+
+RA-010 Observability & Operations Reference Architecture
+
+↓
+
+AI Gateway, Orchestrator, Prompt Registry, Model Registry, Context Service, Agent Registry, Agent Runtime, Guardrail Engine, Evaluation, Audit, Telemetry, FinOps Capabilities
+
+↓
+
+Implementation Packs
+
 ============================================================
 IMPLEMENTATION TRACEABILITY
 ============================================================
@@ -1565,6 +1627,18 @@ Tenant & Organization Platform Build Pack Traceability Registered
 • Added BP-004 Tenant & Organization Platform traceability entry under Registered Build Packs
 
 • Established explicit BP-004 traceability chain: ARCH-002 → ARCH-004 → ARCH-005 → DOMAIN-001 → ES-003 → ES-004 → RA-009 → RA-005 → RA-001 → RA-011 → RA-006 → Tenant & Organization Capabilities → Implementation Packs
+
+• No architectural or functional changes; registration-level update only
+
+------------------------------------------------------------
+
+Version 1.5.0
+
+AI Platform Build Pack Traceability Registered
+
+• Added BP-005 AI Platform traceability entry under Registered Build Packs
+
+• Established explicit BP-005 traceability chain: ARCH-003 → ARCH-005 → ARCH-006 → ARCH-008 → DOMAIN-010 → ES-005 → ES-004 → RA-003 → RA-007 → RA-008 → RA-011 → RA-010 → AI Platform Capabilities → Implementation Packs
 
 • No architectural or functional changes; registration-level update only
 

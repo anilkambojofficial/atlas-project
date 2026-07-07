@@ -1,3 +1,12 @@
+Version 0.6.0
+AI Platform Build Pack Registered.
+
+- Added BP-005 AI Platform (Draft (Engineering Review)) — third platform Build Pack in the AI capability series, includes Purpose, Scope, Dependencies, Build Pack Objectives, AI Capability Map (14 capabilities), Platform Context, AI Platform Responsibilities, Platform Components (Core / Agent / Knowledge Integration / Governance), Repository Mapping, Service Inventory (14 services covering AI Gateway, AI Orchestrator, Model Registry, Prompt Registry, Context Service, Agent Registry, Agent Runtime, Tool Execution Service, RAG Coordinator, Guardrail Engine, Evaluation Engine, AI Audit Service, AI Telemetry Service, AI FinOps Service), Required APIs (10), Required Databases (6), Required Events (10), Required Configuration (12), Model Routing Strategy, Context Assembly Pipeline, Security Requirements, AI Guardrails & Human-in-the-Loop, AI Evaluation, Observability, Deployment Requirements, Testing Requirements, Implementation Readiness Matrix (10 capabilities), Acceptance Criteria, Definition of Done, Engineering Checklist, Risks (10), Assumptions, Out of Scope, Traceability Matrix, Engineering Decisions Register (12 decisions), Cross References, Version History, Freeze Declaration
+- Updated MC-000 Repository Index to v2.6.0 — registered BP-005 AI Platform, removed BP-005 from Planned list, refreshed Repository Statistics (6 registered Build Packs, 7 Planned)
+- Updated RTM-001 Repository Traceability Matrix to v1.5.0 — added BP-005 explicit traceability chain (ARCH-003 → ARCH-005 → ARCH-006 → ARCH-008 → DOMAIN-010 → ES-005 → ES-004 → RA-003 → RA-007 → RA-008 → RA-011 → RA-010 → AI Platform Capabilities)
+- Aligned with BP-ROADMAP.md v1.0.0 sequencing
+- No architectural or functional changes to existing artifacts; registration-level updates only
+
 Version 0.5.0
 Tenant & Organization Platform Build Pack Registered.
 
