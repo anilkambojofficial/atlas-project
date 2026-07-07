@@ -5,7 +5,7 @@ REPOSITORY TRACEABILITY MATRIX
 
 Document ID      : RTM-001
 Document Title   : Repository Traceability Matrix
-Version          : 1.3.0
+Version          : 1.4.0
 Status           : Draft
 Document Owner   : Chief Architecture Office
 Product Owner    : Anil Kumar
@@ -1146,6 +1146,64 @@ Identity, Authentication, Authorization, Session, Token, Federation, Tenant Bind
 
 Implementation Packs
 
+------------------------------------------------------------
+
+BP-004
+
+Tenant & Organization Platform
+
+↓
+
+ARCH-002 Multi-Tenant Architecture
+
+↓
+
+ARCH-004 Data Architecture
+
+↓
+
+ARCH-005 Security Architecture
+
+↓
+
+DOMAIN-001 Organization Domain
+
+↓
+
+ES-003 Database Standards
+
+↓
+
+ES-004 Security Standards
+
+↓
+
+RA-009 Multi-Tenant Reference Architecture
+
+↓
+
+RA-005 Data Platform Reference Architecture
+
+↓
+
+RA-001 Backend Reference Architecture
+
+↓
+
+RA-011 Security Reference Architecture
+
+↓
+
+RA-006 Event-Driven Reference Architecture
+
+↓
+
+Tenant Registry, Lifecycle, Directory, Subscription, Entitlement, Configuration, Administration, Storage Allocation, Audit Capabilities
+
+↓
+
+Implementation Packs
+
 ============================================================
 IMPLEMENTATION TRACEABILITY
 ============================================================
@@ -1495,6 +1553,18 @@ Identity & Access Platform Build Pack Traceability Registered
 • Added BP-003 Identity & Access Platform traceability entry under Registered Build Packs
 
 • Established explicit BP-003 traceability chain: ARCH-005 → ARCH-002 → DOMAIN-002 → ES-004 → RA-011 → RA-009 → RA-001 → RA-007 → Identity Capabilities → Implementation Packs
+
+• No architectural or functional changes; registration-level update only
+
+------------------------------------------------------------
+
+Version 1.4.0
+
+Tenant & Organization Platform Build Pack Traceability Registered
+
+• Added BP-004 Tenant & Organization Platform traceability entry under Registered Build Packs
+
+• Established explicit BP-004 traceability chain: ARCH-002 → ARCH-004 → ARCH-005 → DOMAIN-001 → ES-003 → ES-004 → RA-009 → RA-005 → RA-001 → RA-011 → RA-006 → Tenant & Organization Capabilities → Implementation Packs
 
 • No architectural or functional changes; registration-level update only
 

@@ -1,3 +1,12 @@
+Version 0.5.0
+Tenant & Organization Platform Build Pack Registered.
+
+- Added BP-004 Tenant & Organization Platform (Draft (Engineering Review)) — third platform Build Pack, includes Build Pack Objectives, Tenant Isolation Boundary (5 boundaries), Organization Lifecycle (9 stages), Platform Context Diagram, Service Inventory (13 services covering Registry, Lifecycle, Directory, Subscription, Entitlement, Configuration, Administration, Isolation Enforcement, Storage Allocation, Event Emission, Audit, Provisioning, Deprovisioning), Required Databases (6), Required Events (8 categories), Implementation Readiness Matrix (13 capabilities), Traceability Matrix (33 rows), Engineering Decisions Register (14 decisions)
+- Updated MC-000 Repository Index to v2.5.0 — registered BP-004 Tenant & Organization Platform, removed BP-004 from Planned list, refreshed Repository Statistics (5 registered Build Packs, 8 Planned)
+- Updated RTM-001 Repository Traceability Matrix to v1.4.0 — added BP-004 explicit traceability chain (ARCH-002 → ARCH-004 → ARCH-005 → DOMAIN-001 → ES-003 → ES-004 → RA-009 → RA-005 → RA-001 → RA-011 → RA-006 → Tenant & Organization Capabilities)
+- Aligned with BP-ROADMAP.md v1.0.0 sequencing
+- No architectural or functional changes to existing artifacts; registration-level updates only
+
 Version 0.4.0
 Identity & Access Platform Build Pack Registered.
 
