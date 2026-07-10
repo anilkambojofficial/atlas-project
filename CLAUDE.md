@@ -14,7 +14,9 @@ This file is auto-loaded by Claude Code when the project is opened. It carries a
 
 ---
 
-## 2. Current State (as of 2026-07-08)
+## 2. Current State (as of 2026-07-11)
+
+### Build Packs — Complete ✅
 
 | BP | Title | Status |
 |----|-------|--------|
@@ -25,14 +27,31 @@ This file is auto-loaded by Claude Code when the project is opened. It carries a
 | BP-004 | Tenant & Organization Platform | Draft (Engineering Review) |
 | BP-005 | AI Platform | Draft (Engineering Review) |
 | BP-006 | Knowledge Platform | Draft (Engineering Review) |
-| **BP-007** | **Workflow Platform** | **NEXT — TO AUTHOR** |
-| BP-008 | Meeting Intelligence Platform | Planned |
-| BP-009 | Decision, Action & SOP Platform | Planned |
-| BP-010 | Notification Platform | Planned |
-| BP-011 | Integration Platform | Planned |
-| BP-012 | Production & Operations Platform | Planned |
+| BP-007 | Workflow Platform | Draft (Engineering Review) |
+| BP-008 | Meeting Intelligence Platform | Draft (Engineering Review) |
+| BP-009 | Decision, Action & SOP Platform | Draft (Engineering Review) |
+| BP-010 | Notification Platform | Draft (Engineering Review) |
+| BP-011 | Integration Platform | Draft (Engineering Review) |
+| BP-012 | Production & Operations Platform | Draft (Engineering Review) |
 
-**When the user types `BP-007` (or any BP-XXX), begin authoring that Build Pack immediately using the rules in Sections 3–6 below.** Verify current state by listing `04_Build_Packs/` before starting.
+### Implementation Packs — In Progress
+
+| IP | Title | Status |
+|----|-------|--------|
+| IP-000 | Implementation Roadmap | Draft (Engineering Review) |
+| IP-001 | Platform Foundation | Draft (Engineering Review) |
+| **IP-002** | **Identity & Access** | **NEXT — TO AUTHOR** |
+| IP-003 | Tenant Platform | Planned |
+| IP-004 | AI Platform | Planned |
+| IP-005 | Knowledge Platform | Planned |
+| IP-006 | Workflow Platform | Planned |
+| IP-007 | Meeting Intelligence | Planned |
+| IP-008 | Decision & SOP | Planned |
+| IP-009 | Notification Platform | Planned |
+| IP-010 | Integration Platform | Planned |
+| IP-011 | Production Operations | Planned |
+
+**When the user types `IP-002` (or any IP-XXX), begin authoring that Implementation Pack immediately.** Verify current state by listing `06_Implementation_Packs/` before starting. Mirror the structure of the most recent completed IP (IP-001) as the template exemplar.
 
 ---
 
