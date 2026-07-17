@@ -2,7 +2,21 @@
   "permissions": {
     "allow": [
       "Bash(git *)",
-      "Bash(cat >> *)"
+      "Bash(cat >> *)",
+      "Bash(mkdir -p apps workers infrastructure tests core shared/config shared/logging shared/contracts shared/utils shared/telemetry api/v1)",
+      "Bash(touch apps/.gitkeep workers/.gitkeep infrastructure/.gitkeep tests/.gitkeep)",
+      "Bash(uv --version)",
+      "Bash(py --version)",
+      "Bash(py -0)",
+      "Bash(python -c \"print\\('real python'\\)\")",
+      "Bash(uv python *)",
+      "Bash(uv sync *)",
+      "Bash(curl -s -o /dev/null -w \"startup probe: %{http_code}\\\\n\" http://127.0.0.1:8000/live)",
+      "Bash(curl -s -i http://127.0.0.1:8000/health)",
+      "Bash(curl -s http://127.0.0.1:8000/metrics)",
+      "Bash(curl -s -o /dev/null -w 'status: %{http_code}\\\\n' http://127.0.0.1:8000/api/v1)",
+      "Bash(curl -s http://127.0.0.1:8000/api/v1)",
+      "Bash(curl -s -i -H 'X-Correlation-ID: atlas-verify-123' http://127.0.0.1:8000/health)"
     ]
   }
 }
