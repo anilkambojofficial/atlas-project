@@ -1,0 +1,80 @@
+# ============================================================
+# Project ATLAS — Repository .gitignore
+# Governed by: IP-001 (technology stack), ES-004 (no secrets in
+# source control), ES-006 (build artifacts never committed)
+# ============================================================
+
+# ---------- Secrets & environment (ES-004 §12 — never commit) ----------
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.crt
+*.p12
+secrets/
+**/secrets/
+
+# ---------- Python / uv (IP-001 backend stack) ----------
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+.python-version.local
+.uv-cache/
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+
+# ---------- Node / pnpm / Next.js (IP-001 frontend stack) ----------
+node_modules/
+.pnpm-store/
+.next/
+out/
+.turbo/
+*.tsbuildinfo
+.eslintcache
+
+# ---------- Test & tooling output ----------
+test-results/
+playwright-report/
+.vitest-cache/
+
+# ---------- Docker ----------
+*.local.dockerfile
+docker-compose.override.yml
+
+# ---------- Terraform / IaC (state is never committed) ----------
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+crash.log
+
+# ---------- Kubernetes / Helm local artifacts ----------
+charts/*.tgz
+
+# ---------- Logs & temp ----------
+*.log
+logs/
+tmp/
+temp/
+
+# ---------- IDE / editor ----------
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# ---------- OS ----------
+.DS_Store
+Thumbs.db
+desktop.ini
