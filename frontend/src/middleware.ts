@@ -20,6 +20,14 @@ export function middleware(request: NextRequest) {
   const sessionCookie = request.cookies.get("atlas_session")?.value;
   const isAuthenticated = Boolean(sessionCookie);
 
+  // Root entry: session-aware server redirect (the static page's
+  // meta-refresh remains only as a no-middleware fallback)
+  if (pathname === "/") {
+    return NextResponse.redirect(
+      new URL(isAuthenticated ? "/dashboard" : "/auth/login", request.url),
+    );
+  }
+
   // Redirect unauthenticated users away from protected routes
   if (isProtectedRoute(pathname) && !isAuthenticated) {
     const loginUrl = new URL("/auth/login", request.url);

@@ -3,48 +3,61 @@
 // =============================================================================
 
 // ---------------------------------------------------------------------------
-// API envelope — mirrors ES-002 backend response contract
+// API envelope — exact mirror of the ES-002 backend response contract
+// (§7 success envelope, §17 error structure, §9 pagination metadata),
+// as implemented by backend/shared/contracts/api.py.
 // ---------------------------------------------------------------------------
 
-export interface ApiResponse<T = unknown> {
-  success: boolean;
+export interface ApiSuccessResponse<T = unknown> {
+  success: true;
   data: T;
-  meta: ResponseMeta;
-  errors: ApiError[] | null;
-  request_id: string;
+  metadata: ResponseMetadata;
+  timestamp: string;
+  correlationId: string | null;
+}
+
+export interface ApiErrorResponse {
+  success: false;
+  error: ApiErrorBody;
+}
+
+export type ApiResponse<T = unknown> = ApiSuccessResponse<T> | ApiErrorResponse;
+
+export interface ApiErrorBody {
+  code: string;
+  message: string;
+  details: ApiErrorDetail[];
+  correlationId: string | null;
   timestamp: string;
 }
 
-export interface ResponseMeta {
-  version: string;
-  service: string;
-  environment: string;
-  pagination?: PaginationMeta;
-}
-
-export interface PaginationMeta {
-  page: number;
-  page_size: number;
-  total: number;
-  total_pages: number;
-  has_next: boolean;
-  has_prev: boolean;
-}
-
-export interface ApiError {
-  code: string;
-  message: string;
+/** One entry of an error's `details` list (e.g. validation issues). */
+export interface ApiErrorDetail {
   field?: string;
-  details?: Record<string, unknown>;
+  issue?: string;
+  [key: string]: unknown;
+}
+
+export interface ResponseMetadata {
+  pagination?: PaginationMetadata;
+  [key: string]: unknown;
+}
+
+/** ES-002 §9 pagination response metadata (camelCase keys). */
+export interface PaginationMetadata {
+  page: number;
+  pageSize: number;
+  totalRecords: number;
+  totalPages: number;
 }
 
 // ---------------------------------------------------------------------------
-// Pagination request
+// Pagination request (ES-002 §9 required parameters)
 // ---------------------------------------------------------------------------
 
 export interface PaginationParams {
   page?: number;
-  page_size?: number;
+  pageSize?: number;
 }
 
 // ---------------------------------------------------------------------------

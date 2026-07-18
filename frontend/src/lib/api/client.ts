@@ -1,23 +1,27 @@
 // =============================================================================
 // Project ATLAS — API Client
 //
-// Wraps axios with:
-//  - ES-002 envelope unwrapping
-//  - Correlation ID injection (X-Request-ID)
-//  - Authorization header attachment (Bearer token from session store)
-//  - Automatic token refresh hook (IP-002 — Identity & Access)
-//  - Structured error translation
+// The single path through which UI code reaches the backend (RA-002 §10:
+// components never invoke backend services directly).
+//
+// Responsibilities:
+//  - ES-002 §7 success-envelope unwrapping
+//  - ES-002 §17 error translation into one client error shape
+//  - ES-002 §6 correlation: X-Correlation-ID (UUID v7 per IP-001 §15)
+//  - Authorization header attachment (token storage populated by IP-002)
+//
+// Governing documents: RA-002 §10 (API Client Layer), ES-002, IP-001 §8/§15.
 // =============================================================================
 
 import axios, {
   type AxiosInstance,
   type AxiosRequestConfig,
-  type AxiosResponse,
   type InternalAxiosRequestConfig,
 } from "axios";
-import type { ApiResponse, ApiError } from "@/types";
+import type { ApiErrorDetail, ApiResponse } from "@/types";
 import type { ApiClientError, RequestConfig } from "./types";
-import { generateRequestId } from "@/lib/utils";
+import { logger } from "@/lib/logging";
+import { generateCorrelationId } from "@/lib/utils";
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -27,22 +31,25 @@ const DEFAULT_TIMEOUT_MS = 30_000;
 const API_VERSION = process.env.NEXT_PUBLIC_API_VERSION ?? "v1";
 const BASE_URL = `${process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000"}/api/${API_VERSION}`;
 
+export const CORRELATION_ID_HEADER = "X-Correlation-ID";
+
 // ---------------------------------------------------------------------------
-// Error factory
+// Error factory — one shape for backend, network, and timeout failures
 // ---------------------------------------------------------------------------
 
 function buildClientError(
   message: string,
   status: number,
   code: string,
-  requestId: string,
-  errors: ApiError[] = [],
+  correlationId: string,
+  details: ApiErrorDetail[] = [],
 ): ApiClientError {
   const err = new Error(message) as ApiClientError;
+  err.name = "ApiClientError";
   err.status = status;
   err.code = code;
-  err.requestId = requestId;
-  err.errors = errors;
+  err.correlationId = correlationId;
+  err.details = details;
   return err;
 }
 
@@ -60,19 +67,20 @@ const instance: AxiosInstance = axios.create({
 });
 
 // ---------------------------------------------------------------------------
-// Request interceptor — attach correlation ID and access token
+// Request interceptor — correlation ID (ES-002 §6) and access token
 // ---------------------------------------------------------------------------
 
 instance.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    // Correlation ID — prefer caller-supplied, otherwise generate
-    const requestId =
-      (config.headers as Record<string, string>)["X-Request-ID"] ??
-      generateRequestId();
-    config.headers["X-Request-ID"] = requestId;
+    // Correlation ID — prefer caller-supplied, otherwise generate UUID v7;
+    // the backend echoes it in the response envelope and headers.
+    const correlationId =
+      (config.headers[CORRELATION_ID_HEADER] as string | undefined) ??
+      generateCorrelationId();
+    config.headers[CORRELATION_ID_HEADER] = correlationId;
 
-    // Access token — read from sessionStorage (populated by auth-provider)
-    // Token refresh is handled by the auth provider before requests are issued.
+    // Access token — read from sessionStorage (populated by auth-provider).
+    // Token lifecycle (refresh, rotation) is delivered by IP-002.
     if (!config.headers["X-Skip-Auth"]) {
       const token =
         typeof window !== "undefined"
@@ -90,42 +98,45 @@ instance.interceptors.request.use(
 );
 
 // ---------------------------------------------------------------------------
-// Response interceptor — unwrap ES-002 envelope, translate errors
+// Response interceptor — translate failures into the ES-002 §17 shape
 // ---------------------------------------------------------------------------
 
 instance.interceptors.response.use(
-  (response: AxiosResponse<ApiResponse>) => {
-    // Pass through the raw response so callers can inspect headers / status
-    return response;
-  },
+  (response) => response,
   (error) => {
     if (axios.isAxiosError(error)) {
-      const requestId =
-        (error.config?.headers as Record<string, string>)?.["X-Request-ID"] ??
+      const correlationId =
+        (error.config?.headers?.[CORRELATION_ID_HEADER] as string | undefined) ??
         "unknown";
       const status = error.response?.status ?? 0;
-      const data = error.response?.data as ApiResponse | undefined;
+      const body = error.response?.data as ApiResponse | undefined;
 
-      if (data) {
-        const firstError = data.errors?.[0];
-        throw buildClientError(
-          firstError?.message ?? data.errors?.map((e) => e.message).join("; ") ?? "Request failed",
+      // Backend-produced ES-002 §17 error envelope
+      if (body && body.success === false) {
+        const clientError = buildClientError(
+          body.error.message,
           status,
-          firstError?.code ?? "API_ERROR",
-          data.request_id ?? requestId,
-          data.errors ?? [],
+          body.error.code,
+          body.error.correlationId ?? correlationId,
+          body.error.details,
         );
+        logger.warn("API request failed", {
+          status,
+          code: clientError.code,
+          correlationId: clientError.correlationId,
+        });
+        throw clientError;
       }
 
-      // Network / timeout errors
+      // Client-side failures (no envelope available)
       if (error.code === "ECONNABORTED") {
-        throw buildClientError("Request timed out", 408, "TIMEOUT", requestId);
+        throw buildClientError("Request timed out", 408, "TIMEOUT", correlationId);
       }
       throw buildClientError(
-        error.message ?? "Network error",
+        error.message || "Network error",
         status,
         "NETWORK_ERROR",
-        requestId,
+        correlationId,
       );
     }
     throw error;
@@ -133,14 +144,13 @@ instance.interceptors.response.use(
 );
 
 // ---------------------------------------------------------------------------
-// Public API client methods
+// Public API client methods — unwrap the ES-002 §7 success envelope
 // ---------------------------------------------------------------------------
 
 export const apiClient = {
   async get<T>(path: string, config: RequestConfig = {}): Promise<T> {
-    const axiosConfig = buildAxiosConfig(config);
-    const res = await instance.get<ApiResponse<T>>(path, axiosConfig);
-    return res.data.data;
+    const res = await instance.get<ApiResponse<T>>(path, buildAxiosConfig(config));
+    return unwrap(res.data);
   },
 
   async post<T>(
@@ -148,9 +158,12 @@ export const apiClient = {
     body?: unknown,
     config: RequestConfig = {},
   ): Promise<T> {
-    const axiosConfig = buildAxiosConfig(config);
-    const res = await instance.post<ApiResponse<T>>(path, body, axiosConfig);
-    return res.data.data;
+    const res = await instance.post<ApiResponse<T>>(
+      path,
+      body,
+      buildAxiosConfig(config),
+    );
+    return unwrap(res.data);
   },
 
   async put<T>(
@@ -158,9 +171,12 @@ export const apiClient = {
     body?: unknown,
     config: RequestConfig = {},
   ): Promise<T> {
-    const axiosConfig = buildAxiosConfig(config);
-    const res = await instance.put<ApiResponse<T>>(path, body, axiosConfig);
-    return res.data.data;
+    const res = await instance.put<ApiResponse<T>>(
+      path,
+      body,
+      buildAxiosConfig(config),
+    );
+    return unwrap(res.data);
   },
 
   async patch<T>(
@@ -168,26 +184,46 @@ export const apiClient = {
     body?: unknown,
     config: RequestConfig = {},
   ): Promise<T> {
-    const axiosConfig = buildAxiosConfig(config);
-    const res = await instance.patch<ApiResponse<T>>(path, body, axiosConfig);
-    return res.data.data;
+    const res = await instance.patch<ApiResponse<T>>(
+      path,
+      body,
+      buildAxiosConfig(config),
+    );
+    return unwrap(res.data);
   },
 
   async delete<T = void>(path: string, config: RequestConfig = {}): Promise<T> {
-    const axiosConfig = buildAxiosConfig(config);
-    const res = await instance.delete<ApiResponse<T>>(path, axiosConfig);
-    return res.data.data;
+    const res = await instance.delete<ApiResponse<T>>(
+      path,
+      buildAxiosConfig(config),
+    );
+    return unwrap(res.data);
   },
 };
 
 // ---------------------------------------------------------------------------
-// Internal helper
+// Internal helpers
 // ---------------------------------------------------------------------------
+
+function unwrap<T>(body: ApiResponse<T>): T {
+  // Defensive: a 2xx response always carries the success envelope (ES-002 §7);
+  // anything else is a contract violation surfaced as a client error.
+  if (body.success !== true) {
+    throw buildClientError(
+      body.error.message,
+      0,
+      body.error.code,
+      body.error.correlationId ?? "unknown",
+      body.error.details,
+    );
+  }
+  return body.data;
+}
 
 function buildAxiosConfig(config: RequestConfig): AxiosRequestConfig {
   const headers: Record<string, string> = { ...(config.headers ?? {}) };
   if (config.skipAuth) headers["X-Skip-Auth"] = "1";
-  if (config.requestId) headers["X-Request-ID"] = config.requestId;
+  if (config.correlationId) headers[CORRELATION_ID_HEADER] = config.correlationId;
 
   return {
     baseURL: config.baseURL,

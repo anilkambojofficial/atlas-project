@@ -1,6 +1,11 @@
 // =============================================================================
 // Project ATLAS — API Client Types
+//
+// Governing documents: ES-002 §6 (X-Correlation-ID on every request),
+// §17 (error structure); IP-001 §15 (UUID v7 identifiers).
 // =============================================================================
+
+import type { ApiErrorDetail } from "@/types";
 
 export interface RequestConfig {
   /** Override the default base URL for this request */
@@ -13,15 +18,20 @@ export interface RequestConfig {
   timeoutMs?: number;
   /** Skip attaching the Authorization header */
   skipAuth?: boolean;
-  /** Caller-supplied correlation ID (auto-generated if omitted) */
-  requestId?: string;
+  /** Caller-supplied correlation ID (UUID v7 auto-generated if omitted) */
+  correlationId?: string;
 }
 
+/**
+ * Error thrown by the API client. Mirrors the ES-002 §17 error body so
+ * feature code handles one error shape regardless of failure origin
+ * (backend envelope, network, or timeout).
+ */
 export interface ApiClientError extends Error {
   status: number;
   code: string;
-  requestId: string;
-  errors: import("@/types").ApiError[];
+  correlationId: string;
+  details: ApiErrorDetail[];
 }
 
 export type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
