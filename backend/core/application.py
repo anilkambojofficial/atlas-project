@@ -37,8 +37,15 @@ _logger = get_logger("atlas.core.application")
 
 @asynccontextmanager
 async def _lifespan(app: FastAPI) -> AsyncIterator[None]:
-    """Log application start and stop (RA-001 service lifecycle)."""
+    """Connect infrastructure and log start/stop (RA-001 service lifecycle).
+
+    Infrastructure startup degrades gracefully (ARCH-001 §14): failures
+    are logged and surfaced through readiness rather than crashing the
+    process. Shutdown always releases Kafka, Redis, and database
+    resources (IP-001 §17 — restartable, rollback-safe services).
+    """
     container: ApplicationContainer = app.state.container
+    await container.startup()
     _logger.info(
         "Application started",
         extra={
@@ -47,6 +54,7 @@ async def _lifespan(app: FastAPI) -> AsyncIterator[None]:
         },
     )
     yield
+    await container.shutdown()
     _logger.info("Application stopped")
 
 

@@ -2,28 +2,30 @@
 
 Governing documents:
 - IP-001 §14 — every deployable service exposes ``/health``, ``/ready``,
-  ``/live``, ``/metrics``; health checks validate configuration and,
-  as later stages add them, database, Redis, Kafka, storage, and AI
+  ``/live``, ``/metrics``; health checks validate configuration,
+  database, Redis, Kafka, and (in later stages) storage and AI
   providers.
 - RA-001 §21 — liveness, readiness, and startup health categories with
   dependency checks supporting automated orchestration.
 
-The registry is the extension point through which later Implementation
-Pack stages (S1.2B onward: database, Redis, Kafka) register their
-dependency checks without modifying the health endpoints.
+Checks may be synchronous (e.g. configuration) or asynchronous
+(PostgreSQL/Redis/Kafka round-trips registered in Stage S1.2B); the
+registry awaits awaitable results transparently, so the health endpoints
+never need to distinguish the two.
 """
 
 from __future__ import annotations
 
+import inspect
 from dataclasses import dataclass
-from typing import Callable
+from typing import Awaitable, Callable, Union
 
 from shared.logging import get_logger
 
 _logger = get_logger("atlas.core.health")
 
-#: A check callable returns (healthy, detail).
-HealthCheck = Callable[[], tuple[bool, str]]
+#: A check returns (healthy, detail) either directly or as an awaitable.
+HealthCheck = Callable[[], Union[tuple[bool, str], Awaitable[tuple[bool, str]]]]
 
 
 @dataclass(frozen=True)
@@ -47,12 +49,15 @@ class HealthRegistry:
             raise ValueError(f"Health check '{name}' is already registered")
         self._checks[name] = check
 
-    def run_all(self) -> list[CheckResult]:
+    async def run_all(self) -> list[CheckResult]:
         """Evaluate every registered check; a crashing check is unhealthy."""
         results: list[CheckResult] = []
         for name, check in self._checks.items():
             try:
-                healthy, detail = check()
+                outcome = check()
+                if inspect.isawaitable(outcome):
+                    outcome = await outcome
+                healthy, detail = outcome
             except Exception as exc:  # noqa: BLE001 — a failing probe must not crash the endpoint
                 _logger.error(
                     "Health check raised an exception",

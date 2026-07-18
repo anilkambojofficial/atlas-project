@@ -34,9 +34,9 @@ def _timestamp() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 
-def _evaluate(container: ApplicationContainer) -> tuple[bool, dict[str, Any]]:
+async def _evaluate(container: ApplicationContainer) -> tuple[bool, dict[str, Any]]:
     """Run all registered checks and build the health report body."""
-    results = container.health.run_all()
+    results = await container.health.run_all()
     all_healthy = all(result.healthy for result in results)
     body = {
         "status": _STATUS_HEALTHY if all_healthy else _STATUS_UNHEALTHY,
@@ -57,16 +57,20 @@ def _evaluate(container: ApplicationContainer) -> tuple[bool, dict[str, Any]]:
 
 
 @router.get("/health", summary="Overall service health (IP-001 §14)")
-def health(container: ApplicationContainer = Depends(get_container)) -> JSONResponse:
+async def health(
+    container: ApplicationContainer = Depends(get_container),
+) -> JSONResponse:
     """Full health report across every registered dependency check."""
-    healthy, body = _evaluate(container)
+    healthy, body = await _evaluate(container)
     return JSONResponse(status_code=200 if healthy else 503, content=body)
 
 
 @router.get("/ready", summary="Readiness probe (IP-001 §14)")
-def ready(container: ApplicationContainer = Depends(get_container)) -> JSONResponse:
+async def ready(
+    container: ApplicationContainer = Depends(get_container),
+) -> JSONResponse:
     """Readiness: the service may receive traffic only if all checks pass."""
-    healthy, body = _evaluate(container)
+    healthy, body = await _evaluate(container)
     return JSONResponse(status_code=200 if healthy else 503, content=body)
 
 

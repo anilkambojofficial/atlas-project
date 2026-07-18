@@ -33,6 +33,15 @@ Environment = Literal["development", "testing", "staging", "production"]
 #: Environment variables use this prefix, e.g. ``ATLAS_PORT=9000``.
 ENV_PREFIX = "ATLAS_"
 
+#: Canonical (unprefixed) environment variable names mandated by the
+#: Implementation Packs (IP-002 §18: DATABASE_URL, REDIS_URL, KAFKA_BROKER).
+#: An ``ATLAS_``-prefixed variable takes precedence over its canonical alias.
+CANONICAL_ENV_ALIASES: dict[str, str] = {
+    "DATABASE_URL": "database_url",
+    "REDIS_URL": "redis_url",
+    "KAFKA_BROKER": "kafka_broker",
+}
+
 #: Repository root, derived from this file's location:
 #: backend/shared/config/settings.py -> parents[3] == repository root.
 REPO_ROOT = Path(__file__).resolve().parents[3]
@@ -58,6 +67,38 @@ class Settings(BaseModel):
     port: int = Field(default=8000, ge=1, le=65535)
     log_level: str = "INFO"
     api_v1_prefix: str = "/api/v1"
+
+    # --- Infrastructure (IP-001 §7; S1.2B) -------------------------------
+    # Development defaults are overridable through every layer of the
+    # §10 hierarchy; staging/production values come from the environment
+    # configuration and secret manager, never from code.
+    database_url: str = "postgresql+asyncpg://atlas:atlas@localhost:5432/atlas"
+    database_pool_size: int = Field(default=5, ge=1)
+    database_max_overflow: int = Field(default=10, ge=0)
+    database_echo: bool = False
+    database_connect_timeout_seconds: int = Field(default=5, ge=1)
+
+    redis_url: str = "redis://localhost:6379/0"
+    redis_timeout_seconds: int = Field(default=2, ge=1)
+
+    kafka_broker: str = "localhost:9092"
+    kafka_client_id: str = "atlas-backend"
+    kafka_timeout_seconds: int = Field(default=5, ge=1)
+
+    #: Worker broker/result backend; when unset they resolve to the
+    #: platform Redis URL (IP-001 §7 stack — Celery with Redis).
+    worker_broker_url: str | None = None
+    worker_result_backend: str | None = None
+
+    @property
+    def worker_broker(self) -> str:
+        """Effective Celery broker URL."""
+        return self.worker_broker_url or self.redis_url
+
+    @property
+    def worker_backend(self) -> str:
+        """Effective Celery result backend URL."""
+        return self.worker_result_backend or self.redis_url
 
     @field_validator("log_level")
     @classmethod
@@ -96,8 +137,16 @@ def _deep_merge(base: dict[str, Any], override: dict[str, Any]) -> dict[str, Any
 
 
 def _environment_variable_layer() -> dict[str, Any]:
-    """Collect ``ATLAS_``-prefixed environment variables for known fields."""
+    """Collect environment variables for known fields.
+
+    Canonical unprefixed names (IP-002 §18) are read first; an
+    ``ATLAS_``-prefixed variable overrides its canonical alias.
+    """
     layer: dict[str, Any] = {}
+    for env_name, field_name in CANONICAL_ENV_ALIASES.items():
+        env_value = os.environ.get(env_name)
+        if env_value is not None:
+            layer[field_name] = env_value
     for field_name in Settings.model_fields:
         env_value = os.environ.get(f"{ENV_PREFIX}{field_name.upper()}")
         if env_value is not None:
