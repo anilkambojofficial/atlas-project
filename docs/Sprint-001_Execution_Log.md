@@ -23,7 +23,7 @@ document.
 | S1.1 | Repository Skeleton (10 top-level folders, `.gitignore`, `.editorconfig`) | ✅ Complete, approved, committed | Structure matches IP-001 §6; documentation untouched |
 | S1.2A | Backend Foundation (FastAPI factory, DI, config hierarchy, structured logging, middleware, error taxonomy, health/ready/live/metrics, `/api/v1`) | ✅ Complete, approved, committed | Full runtime verification on Python 3.13.14 / uv 0.11.29 — all endpoints, correlation propagation, ES-002 envelopes, structured logs |
 | S1.2B | Backend Infrastructure Foundation (SQLAlchemy 2.x + ES-003 base mixins, Alembic, PostgreSQL/Redis/Kafka managers, Repository base, Unit of Work, async health checks, Celery worker foundation) | ✅ Complete, approved | Runtime-verified: startup, graceful degradation (ARCH-001 §14), health endpoints reporting accurate per-dependency status, module integrity (18 modules), ORM DDL conformance to ES-003, Celery app + `platform.ping` registration, Alembic config load. Live connectivity: **deferred — see D-S001-01** |
-| S1.3 | Frontend Foundation | ⏳ Awaiting approval | — |
+| S1.3 | Frontend Foundation (Next.js 15 App Router, TypeScript, Tailwind CSS + shadcn/ui CSS variables, TanStack Query, Zustand auth store, React Hook Form + Zod deps, Apache ECharts dep, API client with ES-002 envelope + correlation IDs, auth library skeleton, route middleware, `/api/health` route, root providers tree) | ✅ Complete, approved | TypeScript strict-mode compilation clean; module integrity verified (package.json, next.config.ts, tsconfig.json, tailwind.config.ts, 5 providers, 2 lib modules, 1 store, 1 hook, 8 app routes/layouts); auth OIDC flows and full navigation deferred to IP-002 per design |
 | S1.4 – S1.10 | Per approved Repository Bootstrap Plan | Planned | — |
 
 ---
@@ -62,3 +62,4 @@ document.
 | Date | Entry |
 |------|-------|
 | 2026-07-18 | Initial log: S1.1, S1.2A, S1.2B recorded; decision D-S001-01 recorded |
+| 2026-07-18 | S1.3 Frontend Foundation complete: Next.js 15 App Router scaffold with all canonical dependencies (TanStack Query, Zustand, React Hook Form, Zod, ECharts, axios, shadcn/ui, Radix UI), API client, auth library, Zustand auth store, route middleware, providers tree, route group layouts `(auth)` and `(dashboard)`, `/api/health` route, TypeScript path aliases |
