@@ -19,6 +19,8 @@ from datetime import datetime, timezone
 from typing import Any
 
 from shared.logging.context import get_request_context
+from shared.security import REDACTED as _REDACTED_MARKER
+from shared.security import is_sensitive_key
 
 #: IP-001 §12 requires a TRACE level below DEBUG; stdlib logging lacks one.
 TRACE_LEVEL = 5
@@ -34,13 +36,7 @@ _STANDARD_RECORD_ATTRS = frozenset(
     }
 )
 
-#: Field names whose values are always redacted (ES-001 §12, ES-004 §12).
-_SENSITIVE_KEYS = frozenset(
-    {"password", "secret", "token", "authorization", "api_key", "apikey",
-     "credential", "credentials", "private_key", "refresh_token"}
-)
-
-_REDACTED = "[REDACTED]"
+# Redaction is centralized in shared.security (S1.4 relocation; ES-004 §12).
 
 
 class JsonLogFormatter(logging.Formatter):
@@ -69,7 +65,7 @@ class JsonLogFormatter(logging.Formatter):
         for key, value in record.__dict__.items():
             if key in _STANDARD_RECORD_ATTRS or key.startswith("_"):
                 continue
-            entry[key] = _REDACTED if key.lower() in _SENSITIVE_KEYS else value
+            entry[key] = _REDACTED_MARKER if is_sensitive_key(key) else value
 
         if record.exc_info and record.exc_info[0] is not None:
             entry["exception"] = {

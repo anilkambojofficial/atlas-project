@@ -1,0 +1,31 @@
+"""Shared platform constants (IP-001 §9 — constants package)."""
+
+from shared.constants.platform import (
+    CANONICAL_ENV_ALIASES,
+    DEFAULT_PAGE_SIZE,
+    ENV_PREFIX,
+    ERROR_CODES,
+    EVENT_TOPIC_PREFIX,
+    HEADER_CORRELATION_ID,
+    HEADER_REQUEST_ID,
+    MAX_PAGE_SIZE,
+    STATUS_ALIVE,
+    STATUS_HEALTHY,
+    STATUS_UNHEALTHY,
+    VALID_ENVIRONMENTS,
+)
+
+__all__ = [
+    "CANONICAL_ENV_ALIASES",
+    "DEFAULT_PAGE_SIZE",
+    "ENV_PREFIX",
+    "ERROR_CODES",
+    "EVENT_TOPIC_PREFIX",
+    "HEADER_CORRELATION_ID",
+    "HEADER_REQUEST_ID",
+    "MAX_PAGE_SIZE",
+    "STATUS_ALIVE",
+    "STATUS_HEALTHY",
+    "STATUS_UNHEALTHY",
+    "VALID_ENVIRONMENTS",
+]

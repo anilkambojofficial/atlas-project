@@ -26,12 +26,9 @@ from sqlalchemy import Select, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from infrastructure.database.base import AtlasBase, SoftDeleteMixin
+from shared.constants import DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE
 
 ModelT = TypeVar("ModelT", bound=AtlasBase)
-
-#: Bounded default page size (ES-003 §12 — pagination for large result sets).
-DEFAULT_PAGE_SIZE = 50
-MAX_PAGE_SIZE = 500
 
 
 class SqlAlchemyRepository(Generic[ModelT]):

@@ -27,13 +27,15 @@ from starlette.requests import Request
 from starlette.responses import Response
 from starlette.routing import Route
 
+from shared.constants import HEADER_CORRELATION_ID, HEADER_REQUEST_ID
 from shared.logging import bind_request_context, clear_request_context, get_logger
 from shared.utils import uuid7
 
 _logger = get_logger("atlas.request")
 
-CORRELATION_ID_HEADER = "X-Correlation-ID"
-REQUEST_ID_HEADER = "X-Request-ID"
+# Compatibility aliases; the authoritative literals live in shared.constants (S1.4).
+CORRELATION_ID_HEADER = HEADER_CORRELATION_ID
+REQUEST_ID_HEADER = HEADER_REQUEST_ID
 
 
 def _metric_path(request: Request) -> str:

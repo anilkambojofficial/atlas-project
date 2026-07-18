@@ -28,19 +28,12 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, Field, field_validator
 
+from shared.constants import (  # noqa: E402 — constants are the authoritative home (S1.4)
+    CANONICAL_ENV_ALIASES,
+    ENV_PREFIX,
+)
+
 Environment = Literal["development", "testing", "staging", "production"]
-
-#: Environment variables use this prefix, e.g. ``ATLAS_PORT=9000``.
-ENV_PREFIX = "ATLAS_"
-
-#: Canonical (unprefixed) environment variable names mandated by the
-#: Implementation Packs (IP-002 §18: DATABASE_URL, REDIS_URL, KAFKA_BROKER).
-#: An ``ATLAS_``-prefixed variable takes precedence over its canonical alias.
-CANONICAL_ENV_ALIASES: dict[str, str] = {
-    "DATABASE_URL": "database_url",
-    "REDIS_URL": "redis_url",
-    "KAFKA_BROKER": "kafka_broker",
-}
 
 #: Repository root, derived from this file's location:
 #: backend/shared/config/settings.py -> parents[3] == repository root.

@@ -21,14 +21,17 @@ below — handlers never construct dependencies themselves.
 
 from __future__ import annotations
 
+from typing import Any
+
 from fastapi import Request
 
-from core.health import HealthRegistry
 from infrastructure.cache import RedisManager
 from infrastructure.database import DatabaseManager, UnitOfWork
 from infrastructure.messaging import KafkaManager
 from shared.config import Settings
+from shared.events import EventEnvelope, KafkaEventPublisher
 from shared.logging import get_logger
+from shared.monitoring import HealthRegistry
 from shared.telemetry import MetricsRegistry
 
 _logger = get_logger("atlas.core.container")
@@ -47,6 +50,12 @@ class ApplicationContainer:
         self.database = DatabaseManager(settings)
         self.redis = RedisManager(settings)
         self.kafka = KafkaManager(settings)
+        # KafkaManager structurally satisfies shared.events.MessageTransport;
+        # the binding happens here so shared/* never imports infrastructure
+        # (S1.4 framework-independence rule; IP-001 §11).
+        self.event_publisher = KafkaEventPublisher(
+            self.kafka, source=settings.service_name
+        )
 
         self.health = HealthRegistry()
         self.health.register("configuration", self._configuration_check)
@@ -87,9 +96,26 @@ class ApplicationContainer:
 
     def create_unit_of_work(self) -> UnitOfWork:
         """Build a Unit of Work bound to the platform session factory
-        (RA-001 §10); application services enter it per business use case.
+        (RA-001 §10) with envelope-typed post-commit event publication
+        (RA-001 §13; RA-006 §5). The transactional-outbox upgrade path
+        follows D-S001-01 (drain worker + migration with the first
+        live-database stage).
         """
-        return UnitOfWork(self.database.session_factory)
+        return UnitOfWork(
+            self.database.session_factory, event_publisher=self._publish_event
+        )
+
+    async def _publish_event(self, event: Any) -> None:
+        """Post-commit publication hook: only governed envelopes may enter
+        the Event Bus (RA-006 §19 — publishing ungoverned events is a
+        prohibited anti-pattern)."""
+        if not isinstance(event, EventEnvelope):
+            _logger.error(
+                "Discarded non-envelope event after commit",
+                extra={"eventPythonType": type(event).__name__},
+            )
+            return
+        await self.event_publisher.publish(event)
 
     def _configuration_check(self) -> tuple[bool, str]:
         """Configuration health check (IP-001 §14: health validates configuration).

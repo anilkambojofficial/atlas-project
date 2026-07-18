@@ -23,7 +23,7 @@ from typing import Any
 
 from aiokafka import AIOKafkaConsumer, AIOKafkaProducer
 
-from core.errors import InfrastructureError
+from shared.exceptions import InfrastructureError
 from shared.config import Settings
 from shared.logging import get_logger
 
