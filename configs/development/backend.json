@@ -1,0 +1,6 @@
+{
+  "debug": true,
+  "log_level": "DEBUG",
+  "database_echo": false,
+  "features": {}
+}

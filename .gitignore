@@ -10,6 +10,9 @@
 !.env.example
 !.env.*.example
 !.env.local.example
+# Developer-local configuration layer (IP-001 §10) — never committed
+configs/local/*
+!configs/local/.gitkeep
 *.pem
 *.key
 *.crt

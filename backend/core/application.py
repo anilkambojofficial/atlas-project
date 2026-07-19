@@ -70,6 +70,12 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         service_name=resolved_settings.service_name,
         log_level=resolved_settings.log_level,
     )
+    # Redacted configuration snapshot at composition time (S1.5 runtime
+    # validation surface; ES-004 §12 — sensitive values are masked).
+    _logger.info(
+        "Configuration resolved",
+        extra={"config": resolved_settings.safe_dump()},
+    )
 
     app = FastAPI(
         title=resolved_settings.app_name,

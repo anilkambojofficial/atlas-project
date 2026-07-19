@@ -26,7 +26,19 @@ import os
 from pathlib import Path
 from typing import Any, Literal
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
+
+from shared.config.features import (
+    normalize_feature_mapping,
+    parse_feature_flags_from_env,
+)
+from shared.config.secrets import (
+    EnvironmentSecretProvider,
+    LocalFileSecretProvider,
+    SecretProvider,
+    resolve_secret_layer,
+)
+from shared.security import mask_secret
 
 from shared.constants import (  # noqa: E402 — constants are the authoritative home (S1.4)
     CANONICAL_ENV_ALIASES,
@@ -46,6 +58,13 @@ CONFIGS_DIR = REPO_ROOT / "configs"
 CONFIG_FILE_NAME = "backend.json"
 
 _VALID_LOG_LEVELS = {"TRACE", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"}
+
+#: Settings fields whose values may embed credentials; their values are
+#: masked by :meth:`Settings.safe_dump` (ES-004 §12 — secrets are never
+#: exposed through logs or introspection).
+SENSITIVE_SETTINGS_FIELDS = frozenset(
+    {"database_url", "redis_url", "worker_broker_url", "worker_result_backend"}
+)
 
 
 class Settings(BaseModel):
@@ -83,6 +102,10 @@ class Settings(BaseModel):
     worker_broker_url: str | None = None
     worker_result_backend: str | None = None
 
+    #: Platform-scoped feature flags (IP-001 §10; tenant-scoped feature
+    #: management belongs to IP-003 per RA-009 §12).
+    features: dict[str, bool] = Field(default_factory=dict)
+
     @property
     def worker_broker(self) -> str:
         """Effective Celery broker URL."""
@@ -102,6 +125,71 @@ class Settings(BaseModel):
                 f"log_level must be one of {sorted(_VALID_LOG_LEVELS)} (IP-001 §12)"
             )
         return upper
+
+    @field_validator("database_url")
+    @classmethod
+    def _validate_database_url(cls, value: str) -> str:
+        # IP-001 §7/§15 stack: PostgreSQL through the SQLAlchemy asyncpg driver.
+        if not value.startswith("postgresql+asyncpg://"):
+            raise ValueError(
+                "database_url must use the 'postgresql+asyncpg://' scheme (IP-001 §7)"
+            )
+        return value
+
+    @field_validator("redis_url")
+    @classmethod
+    def _validate_redis_url(cls, value: str) -> str:
+        if not value.startswith(("redis://", "rediss://")):
+            raise ValueError(
+                "redis_url must use the 'redis://' or 'rediss://' scheme (IP-001 §7)"
+            )
+        return value
+
+    @field_validator("features", mode="before")
+    @classmethod
+    def _validate_features(cls, value: object) -> dict[str, bool]:
+        if value is None:
+            return {}
+        if not isinstance(value, dict):
+            raise ValueError("features must be an object of flag -> boolean")
+        return normalize_feature_mapping(value)
+
+    @model_validator(mode="after")
+    def _validate_production_safety(self) -> "Settings":
+        """Runtime cross-field validation (S1.5 scope).
+
+        Production hardening: debug mode and SQL echo would leak internal
+        detail and sensitive parameters (ES-004 §12; ARCH-007 §23
+        production environment purpose) and are therefore rejected at
+        configuration-resolution time — the service refuses to start
+        misconfigured rather than running insecurely (RA-011 §2 fail
+        secure).
+        """
+        if self.environment == "production":
+            if self.debug:
+                raise ValueError("debug must be false in production (ES-004, ARCH-007)")
+            if self.database_echo:
+                raise ValueError(
+                    "database_echo must be false in production (ES-004 §12)"
+                )
+        return self
+
+    def feature_enabled(self, name: str, *, default: bool = False) -> bool:
+        """Resolve a platform feature flag (IP-001 §10 Feature Flags)."""
+        return self.features.get(name.lower(), default)
+
+    def safe_dump(self) -> dict[str, Any]:
+        """Redacted configuration snapshot for logs and diagnostics.
+
+        Credential-bearing values are masked (ES-004 §12); safe fields
+        pass through unchanged.
+        """
+        dumped = self.model_dump()
+        for field_name in SENSITIVE_SETTINGS_FIELDS:
+            value = dumped.get(field_name)
+            if isinstance(value, str) and value:
+                dumped[field_name] = mask_secret(value, visible=4)
+        return dumped
 
 
 def _read_config_file(layer: str) -> dict[str, Any]:
@@ -130,10 +218,11 @@ def _deep_merge(base: dict[str, Any], override: dict[str, Any]) -> dict[str, Any
 
 
 def _environment_variable_layer() -> dict[str, Any]:
-    """Collect environment variables for known fields.
+    """Collect environment variables for known fields (priority 1).
 
     Canonical unprefixed names (IP-002 §18) are read first; an
     ``ATLAS_``-prefixed variable overrides its canonical alias.
+    ``ATLAS_FEATURE_*`` variables override individual feature flags.
     """
     layer: dict[str, Any] = {}
     for env_name, field_name in CANONICAL_ENV_ALIASES.items():
@@ -144,23 +233,55 @@ def _environment_variable_layer() -> dict[str, Any]:
         env_value = os.environ.get(f"{ENV_PREFIX}{field_name.upper()}")
         if env_value is not None:
             layer[field_name] = env_value
+    feature_overrides = parse_feature_flags_from_env(os.environ)
+    if feature_overrides:
+        layer["features"] = feature_overrides
     return layer
 
 
-def load_settings() -> Settings:
+def _default_secret_providers() -> list[SecretProvider]:
+    """Local providers for the Secret Store layer (S1.5 approved scope).
+
+    Order matters within the layer: environment-injected secrets override
+    the developer-local file. The external vault provider (BP-002 Secrets
+    Service) replaces or extends this chain in its governing stage
+    without changes to ``load_settings`` consumers.
+    """
+    return [
+        LocalFileSecretProvider(CONFIGS_DIR),
+        EnvironmentSecretProvider(os.environ),
+    ]
+
+
+def load_settings(
+    secret_providers: list[SecretProvider] | None = None,
+) -> Settings:
     """Resolve settings through the IP-001 §10 configuration hierarchy.
 
     Resolution order (lowest to highest priority):
-    ``configs/base`` -> ``configs/<environment>`` -> ``configs/local``
-    -> environment variables. The active environment is selected by
-    ``ATLAS_ENVIRONMENT`` (default: ``development``).
+
+    1. ``configs/base``                (base configuration — priority 4)
+    2. ``configs/<environment>``       (environment configuration — priority 3)
+    3. ``configs/local``               (developer overrides; part of the
+       environment-configuration tier, applied above the shared files)
+    4. Secret Store layer              (priority 2 — providers above)
+    5. Environment variables           (priority 1)
+
+    The active environment is selected by ``ATLAS_ENVIRONMENT``
+    (default: ``development``).
     """
     environment = os.environ.get(f"{ENV_PREFIX}ENVIRONMENT", "development")
+    providers = (
+        secret_providers if secret_providers is not None else _default_secret_providers()
+    )
 
     resolved: dict[str, Any] = {"environment": environment}
     resolved = _deep_merge(_read_config_file("base"), resolved)
     resolved = _deep_merge(resolved, _read_config_file(environment))
     resolved = _deep_merge(resolved, _read_config_file("local"))
+    resolved = _deep_merge(
+        resolved, resolve_secret_layer(providers, Settings.model_fields.keys())
+    )
     resolved = _deep_merge(resolved, _environment_variable_layer())
 
     return Settings.model_validate(resolved)

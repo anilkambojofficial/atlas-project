@@ -1,0 +1,7 @@
+{
+  "debug": false,
+  "log_level": "WARNING",
+  "database_url": "postgresql+asyncpg://atlas:atlas@localhost:5432/atlas_test",
+  "redis_url": "redis://localhost:6379/1",
+  "features": {}
+}
