@@ -2,5 +2,6 @@
   "debug": true,
   "log_level": "DEBUG",
   "database_echo": false,
-  "features": {}
+  "features": {},
+  "cors_allowed_origins": ["http://localhost:3000"]
 }

@@ -51,6 +51,11 @@ class OutboxRecord(UUIDPrimaryKeyMixin, AuditColumnsMixin, AtlasBase):
         String(20), nullable=False, default=OutboxStatus.PENDING.value, index=True
     )
     attempts: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    #: Earliest time the drain worker may retry this entry (ADR-002 §2
+    #: capped exponential backoff); NULL means eligible immediately.
+    next_attempt_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True, index=True
+    )
     published_at: Mapped[datetime | None] = mapped_column(
         DateTime(timezone=True), nullable=True
     )

@@ -77,16 +77,35 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         extra={"config": resolved_settings.safe_dump()},
     )
 
+    # ADR-004 §4: interactive documentation surfaces are disabled in
+    # production; the schema is never served anonymously there.
+    expose_docs = resolved_settings.environment != "production"
     app = FastAPI(
         title=resolved_settings.app_name,
         version=resolved_settings.version,
-        docs_url="/docs",
-        redoc_url="/redoc",
-        openapi_url="/openapi.json",
+        docs_url="/docs" if expose_docs else None,
+        redoc_url="/redoc" if expose_docs else None,
+        openapi_url="/openapi.json" if expose_docs else None,
         lifespan=_lifespan,
     )
 
     app.state.container = ApplicationContainer(resolved_settings)
+
+    # ADR-006 (PO-approved 2026-07-19): production is same-origin (no CORS
+    # headers — an empty allowlist skips installation, and production
+    # validation rejects a non-empty list); development uses the explicit
+    # allowlist; wildcards are rejected at configuration time.
+    if resolved_settings.cors_allowed_origins:
+        from starlette.middleware.cors import CORSMiddleware
+
+        app.add_middleware(
+            CORSMiddleware,
+            allow_origins=resolved_settings.cors_allowed_origins,
+            allow_credentials=True,
+            allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+            allow_headers=["Authorization", "Content-Type", "X-Correlation-ID"],
+            expose_headers=["X-Correlation-ID", "X-Request-ID"],
+        )
 
     app.add_middleware(RequestContextMiddleware)
     install_exception_handlers(app)

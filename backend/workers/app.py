@@ -6,19 +6,47 @@ Governing documents:
   the configured Redis URL; overridable through the IP-001 §10
   configuration hierarchy).
 - IP-001 §15 — UTC timezone, JSON serialization.
-- IP-001 §12 — the worker does not hijack the root logger so structured
-  platform logging remains in effect.
+- IP-001 §12 / ADR-002 §5 — worker processes emit the platform's
+  structured JSON logs (AUD-001 M-3 closed): the ``setup_logging``
+  signal routes Celery through ``shared.logging`` instead of Celery's
+  own logger tree.
+- ADR-002 §2 — the transactional-outbox drain is scheduled by Celery
+  beat at ``outbox_drain_interval_seconds``.
 
-Run a worker from ``backend/``:
+Run from ``backend/``:
 
     uv run celery -A workers.app worker --pool=solo --loglevel=info
+    uv run celery -A workers.app beat --loglevel=info
 """
 
 from __future__ import annotations
 
+from functools import lru_cache
+from typing import Any
+
 from celery import Celery
+from celery.signals import setup_logging
 
 from shared.config import Settings, load_settings
+from shared.logging import configure_logging
+
+
+@lru_cache(maxsize=1)
+def worker_settings() -> Settings:
+    """Lazily resolved settings shared by the worker process (one
+    resolution per process; avoids import-time file I/O — AUD-001 L-5)."""
+    return load_settings()
+
+
+@setup_logging.connect
+def _configure_worker_logging(**_kwargs: Any) -> None:
+    """Route every worker log line through the platform JSON formatter
+    (IP-001 §12; ADR-002 §5)."""
+    settings = worker_settings()
+    configure_logging(
+        service_name=f"{settings.service_name}-worker",
+        log_level=settings.log_level,
+    )
 
 
 def create_worker_app(settings: Settings) -> Celery:
@@ -37,6 +65,13 @@ def create_worker_app(settings: Settings) -> Celery:
         worker_hijack_root_logger=False,
         task_track_started=True,
         result_expires=3600,
+        beat_schedule={
+            "platform-outbox-drain": {
+                "task": "platform.outbox_drain",
+                "schedule": float(settings.outbox_drain_interval_seconds),
+                "options": {"queue": "atlas.platform"},
+            },
+        },
     )
     # Platform task modules; service task modules register here in their
     # governing Implementation Packs (IP-002 §17 onward).
@@ -45,7 +80,7 @@ def create_worker_app(settings: Settings) -> Celery:
 
 
 #: Module-level application consumed by ``celery -A workers.app``.
-celery_app = create_worker_app(load_settings())
+celery_app = create_worker_app(worker_settings())
 
 #: Celery's default discovery attribute name.
 app = celery_app

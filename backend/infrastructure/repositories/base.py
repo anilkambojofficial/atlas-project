@@ -71,10 +71,32 @@ class SqlAlchemyRepository(Generic[ModelT]):
     async def list(
         self, *, limit: int = DEFAULT_PAGE_SIZE, offset: int = 0
     ) -> Sequence[ModelT]:
-        """Paginated listing (ES-003 §12); ``limit`` is capped at
-        ``MAX_PAGE_SIZE`` to protect the database from unbounded reads."""
+        """Paginated listing (ES-003 §12; ADR-005): deterministic primary-key
+        ordering — UUID v7 keys are time-ordered, so this is stable
+        creation-time order at index cost. ``limit`` is capped at
+        ``MAX_PAGE_SIZE``; OFFSET mode is a bounded convenience — unbounded
+        collections use :meth:`list_after` (keyset)."""
         bounded_limit = max(1, min(limit, MAX_PAGE_SIZE))
-        statement = self._base_statement().limit(bounded_limit).offset(max(0, offset))
+        statement = (
+            self._base_statement()
+            .order_by(self.model.id)  # type: ignore[attr-defined]
+            .limit(bounded_limit)
+            .offset(max(0, offset))
+        )
+        result = await self._session.execute(statement)
+        return result.scalars().all()
+
+    async def list_after(
+        self, *, cursor: uuid.UUID | None = None, limit: int = DEFAULT_PAGE_SIZE
+    ) -> Sequence[ModelT]:
+        """Keyset pagination (ADR-005 — the platform standard for unbounded
+        collections): O(page) at any depth. ``cursor`` is the last ``id`` of
+        the previous page; ``None`` starts from the beginning."""
+        bounded_limit = max(1, min(limit, MAX_PAGE_SIZE))
+        statement = self._base_statement().order_by(self.model.id)  # type: ignore[attr-defined]
+        if cursor is not None:
+            statement = statement.where(self.model.id > cursor)  # type: ignore[attr-defined]
+        statement = statement.limit(bounded_limit)
         result = await self._session.execute(statement)
         return result.scalars().all()
 

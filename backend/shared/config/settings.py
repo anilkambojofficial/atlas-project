@@ -63,8 +63,18 @@ _VALID_LOG_LEVELS = {"TRACE", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"}
 #: masked by :meth:`Settings.safe_dump` (ES-004 §12 — secrets are never
 #: exposed through logs or introspection).
 SENSITIVE_SETTINGS_FIELDS = frozenset(
-    {"database_url", "redis_url", "worker_broker_url", "worker_result_backend"}
+    {
+        "database_url",
+        "redis_url",
+        "worker_broker_url",
+        "worker_result_backend",
+        "auth_jwt_secret",
+    }
 )
+
+#: Development-only JWT secret; production refuses to start with it
+#: (fail secure, RA-011 §2; ADR-004).
+_DEV_JWT_SECRET = "atlas-dev-secret-change-me"
 
 
 class Settings(BaseModel):
@@ -105,6 +115,28 @@ class Settings(BaseModel):
     #: Platform-scoped feature flags (IP-001 §10; tenant-scoped feature
     #: management belongs to IP-003 per RA-009 §12).
     features: dict[str, bool] = Field(default_factory=dict)
+
+    # --- CORS (ADR-006, PO-approved 2026-07-19) --------------------------
+    #: Empty list (the default) means the CORS middleware is not installed.
+    #: Production must be same-origin (no CORS); development uses an
+    #: explicit allowlist; wildcards are forbidden in every environment.
+    cors_allowed_origins: list[str] = Field(default_factory=list)
+
+    # --- Transactional outbox (ADR-002 §2) -------------------------------
+    outbox_drain_interval_seconds: int = Field(default=5, ge=1)
+    outbox_batch_size: int = Field(default=100, ge=1, le=1000)
+    outbox_max_attempts: int = Field(default=10, ge=1)
+
+    # --- Identity & Access (Sprint-002; BP-003, ADR-004) -----------------
+    auth_jwt_secret: str = _DEV_JWT_SECRET
+    auth_jwt_algorithm: str = "HS256"
+    auth_jwt_issuer: str = "atlas-identity"
+    auth_access_token_ttl_seconds: int = Field(default=900, ge=60)
+    auth_refresh_token_ttl_seconds: int = Field(default=30 * 24 * 3600, ge=3600)
+    auth_password_min_length: int = Field(default=12, ge=8)
+    auth_max_failed_logins: int = Field(default=5, ge=1)
+    auth_lockout_seconds: int = Field(default=900, ge=60)
+    auth_refresh_cookie_name: str = "atlas_refresh"
 
     @property
     def worker_broker(self) -> str:
@@ -154,6 +186,28 @@ class Settings(BaseModel):
             raise ValueError("features must be an object of flag -> boolean")
         return normalize_feature_mapping(value)
 
+    @field_validator("cors_allowed_origins", mode="before")
+    @classmethod
+    def _validate_cors_origins(cls, value: object) -> list[str]:
+        """ADR-006: explicit origins only; wildcards forbidden everywhere
+        (Product Owner mandate, 2026-07-19)."""
+        if value is None:
+            return []
+        if isinstance(value, str):
+            value = [item.strip() for item in value.split(",") if item.strip()]
+        if not isinstance(value, list):
+            raise ValueError("cors_allowed_origins must be a list of origins")
+        for origin in value:
+            if not isinstance(origin, str) or "*" in origin:
+                raise ValueError(
+                    "Wildcard CORS origins are forbidden in every environment (ADR-006)"
+                )
+            if not origin.startswith(("http://", "https://")):
+                raise ValueError(
+                    f"CORS origin must be an absolute http(s) origin: {origin!r}"
+                )
+        return list(value)
+
     @model_validator(mode="after")
     def _validate_production_safety(self) -> "Settings":
         """Runtime cross-field validation (S1.5 scope).
@@ -171,6 +225,16 @@ class Settings(BaseModel):
             if self.database_echo:
                 raise ValueError(
                     "database_echo must be false in production (ES-004 §12)"
+                )
+            if self.cors_allowed_origins:
+                raise ValueError(
+                    "Production is same-origin only: cors_allowed_origins must be "
+                    "empty (ADR-006; a superseding ADR is required to change this)"
+                )
+            if self.auth_jwt_secret == _DEV_JWT_SECRET:
+                raise ValueError(
+                    "auth_jwt_secret must be overridden via the secret layer in "
+                    "production (ADR-004; RA-011 §2 fail secure)"
                 )
         return self
 

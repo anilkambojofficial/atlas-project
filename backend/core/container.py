@@ -21,15 +21,13 @@ below — handlers never construct dependencies themselves.
 
 from __future__ import annotations
 
-from typing import Any
-
 from fastapi import Request
 
 from infrastructure.cache import RedisManager
 from infrastructure.database import DatabaseManager, UnitOfWork
 from infrastructure.messaging import KafkaManager
 from shared.config import Settings
-from shared.events import EventEnvelope, KafkaEventPublisher
+from shared.events import KafkaEventPublisher
 from shared.logging import get_logger
 from shared.monitoring import HealthRegistry
 from shared.telemetry import MetricsRegistry
@@ -83,10 +81,10 @@ class ApplicationContainer:
         except Exception as exc:  # noqa: BLE001 — degrade, don't crash (ARCH-001 §14)
             _logger.error("Redis unavailable at startup", exc_info=exc)
 
-        try:
-            await self.kafka.start()
-        except Exception as exc:  # noqa: BLE001 — degrade, don't crash (ARCH-001 §14)
-            _logger.error("Kafka unavailable at startup", exc_info=exc)
+        # ADR-003 §1: supervised establishment — startup failure engages the
+        # background reconnect loop instead of leaving the pod permanently
+        # unable to publish; never raises.
+        await self.kafka.start_supervised()
 
     async def shutdown(self) -> None:
         """Release infrastructure resources (application lifespan stop)."""
@@ -96,26 +94,13 @@ class ApplicationContainer:
 
     def create_unit_of_work(self) -> UnitOfWork:
         """Build a Unit of Work bound to the platform session factory
-        (RA-001 §10) with envelope-typed post-commit event publication
-        (RA-001 §13; RA-006 §5). The transactional-outbox upgrade path
-        follows D-S001-01 (drain worker + migration with the first
-        live-database stage).
+        (RA-001 §10). Collected envelopes are persisted to the
+        transactional outbox inside the business transaction (ADR-002 §1)
+        and published by the drain worker — the direct post-commit path is
+        retired for transactional events. ``self.event_publisher`` remains
+        the sanctioned path for non-transactional system events (ADR-002 §4).
         """
-        return UnitOfWork(
-            self.database.session_factory, event_publisher=self._publish_event
-        )
-
-    async def _publish_event(self, event: Any) -> None:
-        """Post-commit publication hook: only governed envelopes may enter
-        the Event Bus (RA-006 §19 — publishing ungoverned events is a
-        prohibited anti-pattern)."""
-        if not isinstance(event, EventEnvelope):
-            _logger.error(
-                "Discarded non-envelope event after commit",
-                extra={"eventPythonType": type(event).__name__},
-            )
-            return
-        await self.event_publisher.publish(event)
+        return UnitOfWork(self.database.session_factory)
 
     def _configuration_check(self) -> tuple[bool, str]:
         """Configuration health check (IP-001 §14: health validates configuration).

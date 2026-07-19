@@ -147,8 +147,33 @@ class TestRuntimeValidation:
             Settings(environment="production", database_echo=True)
 
     def test_production_valid_when_hardened(self) -> None:
-        settings = Settings(environment="production", debug=False, database_echo=False)
+        settings = Settings(
+            environment="production",
+            debug=False,
+            database_echo=False,
+            auth_jwt_secret="a-production-secret-from-the-vault",
+        )
         assert settings.environment == "production"
+
+    def test_production_rejects_dev_jwt_secret(self) -> None:
+        # ADR-004 / RA-011 §2 fail secure: production refuses the shipped
+        # development secret.
+        with pytest.raises(Exception, match="auth_jwt_secret"):
+            Settings(environment="production", debug=False, database_echo=False)
+
+    def test_production_rejects_cors_origins(self) -> None:
+        # ADR-006: production is same-origin only.
+        with pytest.raises(Exception, match="same-origin"):
+            Settings(
+                environment="production",
+                auth_jwt_secret="a-production-secret-from-the-vault",
+                cors_allowed_origins=["https://app.example.com"],
+            )
+
+    def test_cors_wildcards_forbidden_everywhere(self) -> None:
+        # ADR-006 PO mandate: wildcards rejected in every environment.
+        with pytest.raises(Exception, match="Wildcard"):
+            Settings(environment="development", cors_allowed_origins=["*"])
 
     def test_database_scheme_enforced(self) -> None:
         with pytest.raises(Exception, match="postgresql\\+asyncpg"):
@@ -177,6 +202,9 @@ class TestShippedProfiles:
     )
     def test_each_profile_resolves(self, environment, monkeypatch) -> None:
         monkeypatch.setenv("ATLAS_ENVIRONMENT", environment)
+        if environment == "production":
+            # ADR-004: production requires a vault-supplied JWT secret.
+            monkeypatch.setenv("ATLAS_AUTH_JWT_SECRET", "vault-supplied-secret")
         settings = load_settings(secret_providers=[])
         assert settings.environment == environment
         if environment == "production":

@@ -25,6 +25,11 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 from infrastructure.database.base import AtlasBase
 from shared.config import load_settings
 
+# Model modules must be imported so their tables register on the platform
+# metadata for autogenerate comparison (ES-003 §16).
+import infrastructure.messaging.outbox_model  # noqa: F401
+import apps.identity.models  # noqa: F401
+
 config = context.config
 
 if config.config_file_name is not None:
