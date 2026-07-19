@@ -1,0 +1,44 @@
+# Project ATLAS — build-context exclusions for repo-root contexts
+# (backend image builds from the repository root; ES-006 §6 minimal contexts)
+
+.git
+.claude
+**/.venv
+**/__pycache__
+**/.pytest_cache
+**/.mypy_cache
+**/.ruff_cache
+**/htmlcov
+**/.coverage
+
+# Frontend build artifacts (frontend builds use frontend/.dockerignore)
+frontend/node_modules
+frontend/.next
+frontend/test-results
+frontend/playwright-report
+
+# Documentation layers — not needed inside runtime images
+00_Master_Context
+01_Architecture
+02_Domains
+03_Engineering_Standards
+04_Build_Packs
+05_Reference_Architecture
+06_Implementation_Packs
+07_ADRs
+08_Templates
+09_Assets
+10_API
+11_Database
+12_UI_UX
+13_Testing
+14_Deployment
+99_Reference
+docs
+
+# Local-only configuration layer (ES-004 §12 — never baked into images)
+configs/local
+
+# Environment files
+.env
+.env.*

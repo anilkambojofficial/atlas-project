@@ -1,0 +1,165 @@
+# =============================================================================
+# Project ATLAS — Development environment (Stage S1.6)
+#
+# Governing documents: IP-001 §16 (containers), §10 (configuration via
+# environment; IP-002 §18 canonical variable names), ES-006 §8/§11,
+# ARCH-007 (container-first), approved S1.6 plan; discharges D-S001-01.
+#
+# Profiles:
+#   infra — PostgreSQL, Redis, Kafka only (host-run backend/frontend)
+#   full  — infra + backend API + worker + frontend containers
+#
+# Usage: scripts/dev-up.sh [infra|full]   ·   scripts/dev-down.sh [--volumes]
+#
+# Credentials below are the well-known local development defaults that the
+# committed configuration hierarchy already uses (dev/test scope only —
+# ES-004 §12); staging/production never use this file: their secrets come
+# from the secret layer (S1.5) and the K8s manifests of S1.7/IP-011.
+# =============================================================================
+
+name: atlas
+
+networks:
+  atlas:
+    driver: bridge
+
+volumes:
+  postgres-data:
+  redis-data:
+  kafka-data:
+
+services:
+  # ---------------------------------------------------------------- infra --
+  postgres:
+    image: postgres:17-alpine
+    profiles: ["infra", "full"]
+    environment:
+      POSTGRES_USER: ${ATLAS_DEV_DB_USER:-atlas}
+      POSTGRES_PASSWORD: ${ATLAS_DEV_DB_PASSWORD:-atlas}
+      POSTGRES_DB: ${ATLAS_DEV_DB_NAME:-atlas}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${ATLAS_DEV_DB_USER:-atlas} -d ${ATLAS_DEV_DB_NAME:-atlas}"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+      start_period: 10s
+    networks: [atlas]
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    profiles: ["infra", "full"]
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+      start_period: 5s
+    networks: [atlas]
+    restart: unless-stopped
+
+  kafka:
+    image: apache/kafka:3.9.1
+    profiles: ["infra", "full"]
+    environment:
+      # Single-node KRaft (dev topology per ES-006 §11; production topology
+      # is IP-011 scope).
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      CLUSTER_ID: NDQ4YjY1NTk0ZDdhNDRjYm
+      # Dual listeners: INTERNAL for the compose network (kafka:19092),
+      # HOST published to the developer machine as localhost:9092 —
+      # matching the committed configs/ defaults.
+      KAFKA_LISTENERS: INTERNAL://0.0.0.0:19092,CONTROLLER://0.0.0.0:9093,HOST://0.0.0.0:9092
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:19092,HOST://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,HOST:PLAINTEXT,CONTROLLER:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_LOG_DIRS: /var/lib/kafka/data
+    ports:
+      - "9092:9092"
+    volumes:
+      - kafka-data:/var/lib/kafka/data
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --list >/dev/null 2>&1"]
+      interval: 10s
+      timeout: 10s
+      retries: 12
+      start_period: 25s
+    networks: [atlas]
+    restart: unless-stopped
+
+  # ----------------------------------------------------------------- full --
+  backend:
+    image: atlas-backend:0.1.0
+    build:
+      context: ../..
+      dockerfile: backend/Dockerfile
+    profiles: ["full"]
+    environment:
+      ATLAS_ENVIRONMENT: development
+      # Canonical infrastructure variables (IP-002 §18) targeting the
+      # compose-internal service names.
+      DATABASE_URL: postgresql+asyncpg://${ATLAS_DEV_DB_USER:-atlas}:${ATLAS_DEV_DB_PASSWORD:-atlas}@postgres:5432/${ATLAS_DEV_DB_NAME:-atlas}
+      REDIS_URL: redis://redis:6379/0
+      KAFKA_BROKER: kafka:19092
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    networks: [atlas]
+    restart: unless-stopped
+
+  worker:
+    image: atlas-backend:0.1.0
+    build:
+      context: ../..
+      dockerfile: backend/Dockerfile
+    profiles: ["full"]
+    command: ["celery", "-A", "workers.app", "worker", "--pool=solo", "--loglevel=info"]
+    environment:
+      ATLAS_ENVIRONMENT: development
+      DATABASE_URL: postgresql+asyncpg://${ATLAS_DEV_DB_USER:-atlas}:${ATLAS_DEV_DB_PASSWORD:-atlas}@postgres:5432/${ATLAS_DEV_DB_NAME:-atlas}
+      REDIS_URL: redis://redis:6379/0
+      KAFKA_BROKER: kafka:19092
+    depends_on:
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "celery -A workers.app inspect ping -d celery@$(hostname) --timeout 5 | grep -q pong"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    networks: [atlas]
+    restart: unless-stopped
+
+  frontend:
+    image: atlas-frontend:0.1.0
+    build:
+      context: ../../frontend
+      dockerfile: Dockerfile
+    profiles: ["full"]
+    ports:
+      - "3000:3000"
+    networks: [atlas]
+    restart: unless-stopped

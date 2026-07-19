@@ -4,6 +4,10 @@ const nextConfig: NextConfig = {
   // Strict mode for catching issues early
   reactStrictMode: true,
 
+  // Standalone server output for the container runtime (IP-001 §16.1;
+  // Stage S1.6): .next/standalone carries server.js + traced node_modules.
+  output: "standalone",
+
   // Environment variables exposed to the browser (NEXT_PUBLIC_ prefix required)
   // Additional env forwarding if needed at build time
   env: {},

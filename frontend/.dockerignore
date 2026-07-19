@@ -1,0 +1,17 @@
+# Project ATLAS — frontend build-context exclusions (context: frontend/)
+
+node_modules
+.next
+out
+test-results
+playwright-report
+.vitest-cache
+*.tsbuildinfo
+.eslintcache
+
+.env
+.env.*
+!.env.local.example
+
+Dockerfile
+.dockerignore
