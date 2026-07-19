@@ -74,7 +74,7 @@ SENSITIVE_SETTINGS_FIELDS = frozenset(
 
 #: Development-only JWT secret; production refuses to start with it
 #: (fail secure, RA-011 §2; ADR-004).
-_DEV_JWT_SECRET = "atlas-dev-secret-change-me"
+_DEV_JWT_SECRET = "atlas-dev-only-secret-change-me-0000000000"
 
 
 class Settings(BaseModel):
@@ -128,7 +128,9 @@ class Settings(BaseModel):
     outbox_max_attempts: int = Field(default=10, ge=1)
 
     # --- Identity & Access (Sprint-002; BP-003, ADR-004) -----------------
-    auth_jwt_secret: str = _DEV_JWT_SECRET
+    #: RFC 7518 §3.2: HS256 keys must be >= 32 bytes; enforced at
+    #: resolution time so a weak key can never reach the token service.
+    auth_jwt_secret: str = Field(default=_DEV_JWT_SECRET, min_length=32)
     auth_jwt_algorithm: str = "HS256"
     auth_jwt_issuer: str = "atlas-identity"
     auth_access_token_ttl_seconds: int = Field(default=900, ge=60)

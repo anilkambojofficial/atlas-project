@@ -12,6 +12,7 @@ from shared.auth.contracts import (
     PolicyDecisionPoint,
     Principal,
     TokenVerifier,
+    public_endpoint,
 )
 
 __all__ = [
@@ -20,4 +21,5 @@ __all__ = [
     "PolicyDecisionPoint",
     "Principal",
     "TokenVerifier",
+    "public_endpoint",
 ]

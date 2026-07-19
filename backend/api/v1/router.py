@@ -20,14 +20,22 @@ from typing import Any
 
 from fastapi import APIRouter, Depends
 
+from api.v1.security import enforce_authentication
+from apps.identity.api import router as identity_router
 from core.container import get_settings
+from shared.auth import public_endpoint
 from shared.config import Settings
 from shared.contracts.api import success_envelope
 
-router = APIRouter(tags=["api-v1"])
+# ADR-004 §3: deny-by-default — every v1 route passes the enforcement
+# gate; anonymous reachability requires the explicit public marker.
+router = APIRouter(tags=["api-v1"], dependencies=[Depends(enforce_authentication)])
+
+router.include_router(identity_router)
 
 
 @router.get("", summary="API v1 descriptor")
+@public_endpoint
 def api_descriptor(settings: Settings = Depends(get_settings)) -> dict[str, Any]:
     """Describe the v1 API surface (ES-002 §7 envelope)."""
     return success_envelope(

@@ -204,7 +204,7 @@ class TestShippedProfiles:
         monkeypatch.setenv("ATLAS_ENVIRONMENT", environment)
         if environment == "production":
             # ADR-004: production requires a vault-supplied JWT secret.
-            monkeypatch.setenv("ATLAS_AUTH_JWT_SECRET", "vault-supplied-secret")
+            monkeypatch.setenv("ATLAS_AUTH_JWT_SECRET", "vault-supplied-secret-0123456789abcdef")
         settings = load_settings(secret_providers=[])
         assert settings.environment == environment
         if environment == "production":

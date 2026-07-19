@@ -50,6 +50,18 @@ class AccessDecision:
     obligations: tuple[str, ...] = field(default=())
 
 
+def public_endpoint(func):  # type: ignore[no-untyped-def]
+    """Mark a route handler as anonymously reachable (ADR-004 §3).
+
+    The platform enforcement dependency at the ``/api/v1`` mount denies
+    by default; this explicit marker is the only opt-out, so forgetting
+    to protect a route is impossible and unprotecting one is visible in
+    review. Framework-free: it only sets an attribute.
+    """
+    func.__atlas_public__ = True
+    return func
+
+
 @runtime_checkable
 class TokenVerifier(Protocol):
     """Verifies a bearer credential into a :class:`Principal`.
