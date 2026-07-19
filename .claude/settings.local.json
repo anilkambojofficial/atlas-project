@@ -35,7 +35,19 @@
       "Bash(corepack pnpm *)",
       "Bash(curl -s http://127.0.0.1:3000/)",
       "Bash(curl -s http://127.0.0.1:3000/auth/login)",
-      "Bash(cd /e/atlas-project/backend *)"
+      "Bash(cd /e/atlas-project/backend *)",
+      "Bash(NODE_OPTIONS=\"--max-old-space-size=3072\" corepack pnpm build)",
+      "Bash(echo \"exit=$?\")",
+      "Bash(powershell -Command \"Get-CimInstance Win32_OperatingSystem | Select-Object FreePhysicalMemory,TotalVisibleMemorySize | Format-List\")",
+      "Bash(NODE_OPTIONS=\"--max-old-space-size=2048\" corepack pnpm build)",
+      "Bash(wsl --shutdown)",
+      "Bash(powershell -Command \"\\(Get-CimInstance Win32_OperatingSystem\\).FreePhysicalMemory\")",
+      "Bash(NODE_OPTIONS=\"--max-old-space-size=2560\" corepack pnpm build)",
+      "Bash(NODE_OPTIONS=\"--max-old-space-size=1536\" corepack pnpm exec tsc --noEmit)",
+      "Bash(echo \"TSC_EXIT=$?\")",
+      "Bash(curl -s -o /dev/null -w \"login: %{http_code}\\\\n\" --max-time 60 http://localhost:3000/auth/login)",
+      "Bash(curl -s -o /dev/null -w \"root: %{http_code} -> %{redirect_url}\\\\n\" --max-time 30 http://localhost:3000/)",
+      "Bash(curl -s --max-time 30 http://localhost:3000/auth/login)"
     ]
   }
 }
