@@ -847,3 +847,70 @@ The Identity Platform is the single owner of authentication, authorization, user
 All downstream Implementation Packs shall consume Identity Platform services through approved APIs and events rather than implementing independent identity functionality.
 
 Implementation shall remain fully traceable to BP-003, RA-001, RA-009, RA-011, and the Engineering Standards.
+
+---
+
+# 31. As-Built Addendum — Sprint-002 (2026-07-19)
+
+> Appended by the Sprint-002 Engineering Closure. The specification above
+> (2026-07-08) is preserved unmodified; this addendum records what was
+> **actually built**, where it diverges, and what remains. Reality below
+> supersedes intention above wherever they conflict (CLS-002 authority).
+> Process note: Sprint-002 was executed against the Product Owner's inline
+> scope directive; this document's §1–§30 were not loaded during
+> implementation (process finding P-1, CLS-002) — conformance was
+> assessed at closure.
+
+## 31.1 Delivered (verified live; evidence in LOG-S002 / CLS-002)
+
+- Module `backend/apps/identity/` per §6 layering intent: `models`,
+  `domain` (framework-free policies/permissions), `repositories`,
+  `services`, `schemas`, `security`, `api`; enforcement in
+  `backend/api/v1/security.py`.
+- **Tables (migration 0002, prefix `identity_`):** users, organizations,
+  roles, memberships, sessions, verification_tokens, audit_log (append-only).
+- **Auth:** Argon2id (ED-004 ✓); HS256 JWT ≥32-byte key, 15-min TTL
+  (ED-002 ✓); opaque refresh tokens SHA-256-at-rest, httpOnly cookie,
+  rotation with family-revocation theft response; login lockout
+  (5 attempts / 15 min); enumeration-resistant responses.
+- **Authorization (ED-007 partial):** RBAC via org-scoped roles with
+  permission strings; PDP deny-by-default + cross-tenant deny
+  (`shared.auth.PolicyDecisionPoint` implementation); `require_permission`
+  PEP; ADR-004 deny-by-default gate at `/api/v1` with explicit
+  `public_endpoint` markers. ABAC: deferred.
+- **APIs (§8 subset):** Authentication API + User API
+  (`/api/v1/identity/auth/*`, `/users/me`). Registration optionally
+  bootstraps an organization with seeded system roles (owner/admin/member).
+- **Frameworks:** email verification + password reset (token issuance,
+  hashed at rest; delivery behind feature flag `identity_email_delivery`).
+- **Events (ED-006 ✓ via ADR-002 outbox):** identity.user.registered.v1
+  (audit), organization.created.v1 (domain), identity.user.logged_in.v1,
+  identity.user.locked.v1, identity.session.revoked.v1,
+  identity.session.reuse_detected.v1, identity.password.reset_completed.v1
+  (security). Atomic audit rows per use case (ED-008 ✓).
+- **Frontend:** login (RHF+Zod), logout, RouteGuard + middleware marker
+  layer, in-memory access token + silent rotation at 80% TTL, profile.
+
+## 31.2 Ratified divergences from §9/§14 (design decisions, as-built)
+
+| # | Specification | As-built | Rationale |
+|---|---|---|---|
+| D-1 | `permissions`, `role_permissions`, `user_roles` join tables | Permission strings as JSONB array on org-scoped `identity_roles`; single role per membership | Simpler at current scale; join-table normalization deferred until custom-role editing (IP-003+) |
+| D-2 | Separate `sessions` + `refresh_tokens` | Merged `identity_sessions` (session ≡ refresh lineage; `family_id`, `replaced_by`) | Rotation lineage and revocation live on one row; no dual-write |
+| D-3 | §14 "revocation shall immediately invalidate authentication" | Refresh invalidation immediate; outstanding access JWTs live ≤15 min | Stateless verification; ED-005 Redis denylist is the planned closure (CLS-002 M-3) |
+| D-4 | Bare table names | `identity_<name>` prefix | Module-ownership visibility in a shared schema (CON-001 §6.2) |
+
+## 31.3 Deferred to future stages (never silently dropped)
+
+OAuth2/OIDC (ED-003) · MFA API/devices · API keys + service accounts
+(machine/agent identity classes — contracts exist in `shared.auth`) ·
+Role/Permission/Session/Token/Audit admin APIs · Redis session cache +
+revocation denylist (ED-005) · password history · login-history table
+(partially covered by audit_log) · ABAC policies · session/token cleanup
+worker (§17) · org switching (multi-membership).
+
+## 31.4 Traceability
+
+BP-003 §8 (identity classes, PDP/PEP, fail-closed) · ADR-001..007 (all
+enforced; gate evidence LOG-S002) · ES-003 mixins on all tables ·
+ES-002 envelopes/errors · ENG-004 tenancy layout (REG-001).

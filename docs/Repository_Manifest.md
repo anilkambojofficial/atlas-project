@@ -14,7 +14,7 @@
 | Repository Name | **Project ATLAS** — AI-native, multi-tenant Enterprise Knowledge & Intelligence Platform (MC-001) |
 | Repository Version | Baseline **v1.0.0-sprint001** (BAS-001; freeze commits + tag pending PO approval — last commit `dbe75eb`, 32 uncommitted paths comprising S1.6 + governance corpus) |
 | Current Baseline | BAS-001 — Sprint-001 frozen scope; immutability terms in BAS-001 §Immutability |
-| Current Sprint | Sprint-001 **CLOSED & FROZEN** (CLS-001/BAS-001, GOV-004 Accepted 2026-07-19) · Sprint-002 (Identity & Access) — governance readiness conditions discharged; begins with IP-002 authoring |
+| Current Sprint | Sprint-001 **CLOSED & FROZEN** (`baseline-v1.0.0-sprint001` → `d7293b0`) · Sprint-002 (Identity & Access) **IMPLEMENTED & CLOSURE-REVIEWED** — all five GOV-001 gates closed; READY TO FREEZE pending PO (CLS-002; recommended tag `baseline-v1.1.0-sprint002`); state authority LOG-S002 |
 | Repository Status | Verified platform foundation; zero business features; **NOT production ready** (by declaration, CON-001 §15); **governance ratified 2026-07-19** — CON-001 in force (v1.0.0), ADR-001..007 all Accepted; freeze commits + baseline tag pending |
 | Product Owner | Anil Kumar (anilkamboj@vardhman.com) — sole approval authority |
 
