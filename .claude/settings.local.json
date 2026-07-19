@@ -34,7 +34,8 @@
       "Bash(printf 'node-linker=hoisted\\\\n' > .npmrc && cat .npmrc && rm -rf node_modules && echo cleaned)",
       "Bash(corepack pnpm *)",
       "Bash(curl -s http://127.0.0.1:3000/)",
-      "Bash(curl -s http://127.0.0.1:3000/auth/login)"
+      "Bash(curl -s http://127.0.0.1:3000/auth/login)",
+      "Bash(cd /e/atlas-project/backend *)"
     ]
   }
 }
