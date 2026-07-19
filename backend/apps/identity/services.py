@@ -277,6 +277,10 @@ class AuthenticationService(_IdentityServiceBase):
             self._audit(
                 "identity.login.rejected_locked", actor_user_id=user.id
             )
+            # Security state must survive the rejected request: the UoW
+            # exit path rolls back on exception, so commit first
+            # (fail secure, RA-011 §2).
+            await self._uow.commit()
             raise AuthenticationError(
                 "Account temporarily locked. Try again later."
             )
@@ -296,6 +300,9 @@ class AuthenticationService(_IdentityServiceBase):
                     EventCategory.SECURITY,
                     payload={"userId": str(user.id)},
                 )
+            # Persist the counter/lock despite the raised rejection (the
+            # UoW rolls back on exception; fail secure, RA-011 §2).
+            await self._uow.commit()
             raise generic
 
         if security.password_needs_rehash(user.password_hash):
@@ -340,6 +347,9 @@ class AuthenticationService(_IdentityServiceBase):
                 EventCategory.SECURITY,
                 payload={"userId": str(session.user_id)},
             )
+            # The family revocation is the theft response — it must commit
+            # even though this request is rejected (fail secure).
+            await self._uow.commit()
             raise invalid
         if session.revoked_at is not None or session.expires_at <= _now():
             raise invalid
