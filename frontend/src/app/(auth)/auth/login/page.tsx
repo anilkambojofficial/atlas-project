@@ -1,16 +1,10 @@
+import { Suspense } from "react";
 import type { Metadata } from "next";
+import { LoginForm } from "./login-form";
 
 export const metadata: Metadata = {
   title: "Sign In",
 };
-
-// ---------------------------------------------------------------------------
-// Login Page
-//
-// Full OIDC authorization-code + PKCE flow is implemented in IP-002.
-// This page is the foundation placeholder that establishes the route,
-// metadata, and shell layout for the authentication surface.
-// ---------------------------------------------------------------------------
 
 export default function LoginPage() {
   return (
@@ -20,17 +14,11 @@ export default function LoginPage() {
           <h1 className="text-2xl font-bold tracking-tight text-foreground">
             Project ATLAS
           </h1>
-          <p className="text-sm text-muted-foreground">
-            Sign in to continue
-          </p>
+          <p className="text-sm text-muted-foreground">Sign in to continue</p>
         </div>
-
-        {/* Auth form rendered by IP-002 */}
-        <div className="flex h-32 items-center justify-center rounded-md border border-dashed border-border">
-          <p className="text-xs text-muted-foreground">
-            Auth form — IP-002 (Identity &amp; Access)
-          </p>
-        </div>
+        <Suspense>
+          <LoginForm />
+        </Suspense>
       </div>
     </main>
   );

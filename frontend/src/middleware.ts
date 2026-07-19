@@ -1,13 +1,10 @@
 // =============================================================================
 // Project ATLAS — Route Middleware
 //
-// Enforces authentication on protected routes.  Reads the session from
-// sessionStorage is not available in middleware (Edge runtime) — instead,
-// middleware reads the `atlas_session` cookie that the backend sets as an
-// httpOnly, Secure cookie during OIDC callback (IP-002).
-//
-// Until IP-002 is delivered this middleware allows all traffic through so
-// the frontend can be developed and verified independently.
+// Server-side redirect layer over the `atlas_session` marker cookie set by
+// the auth store on login (Sprint-002). The marker is a non-sensitive flag:
+// real enforcement is the backend's deny-by-default gate (ADR-004) plus the
+// client RouteGuard after silent bootstrap.
 // =============================================================================
 
 import { type NextRequest, NextResponse } from "next/server";

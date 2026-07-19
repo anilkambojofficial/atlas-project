@@ -21,6 +21,7 @@ import axios, {
 import type { ApiErrorDetail, ApiResponse } from "@/types";
 import type { ApiClientError, RequestConfig } from "./types";
 import { logger } from "@/lib/logging";
+import { getAccessToken as getInMemoryAccessToken } from "@/lib/auth/token";
 import { generateCorrelationId } from "@/lib/utils";
 
 // ---------------------------------------------------------------------------
@@ -60,6 +61,10 @@ function buildClientError(
 const instance: AxiosInstance = axios.create({
   baseURL: BASE_URL,
   timeout: DEFAULT_TIMEOUT_MS,
+  // Sprint-002: the refresh token is an httpOnly backend cookie; requests
+  // must carry credentials (dev cross-origin is allowlisted per ADR-006,
+  // production is same-origin).
+  withCredentials: true,
   headers: {
     "Content-Type": "application/json",
     "X-App-Name": process.env.NEXT_PUBLIC_APP_NAME ?? "atlas-frontend",
@@ -79,13 +84,10 @@ instance.interceptors.request.use(
       generateCorrelationId();
     config.headers[CORRELATION_ID_HEADER] = correlationId;
 
-    // Access token — read from sessionStorage (populated by auth-provider).
-    // Token lifecycle (refresh, rotation) is delivered by IP-002.
+    // Access token — in-memory only (AUD-001 M-5: never web storage);
+    // populated by the auth store on login/refresh.
     if (!config.headers["X-Skip-Auth"]) {
-      const token =
-        typeof window !== "undefined"
-          ? sessionStorage.getItem("atlas.access_token")
-          : null;
+      const token = getInMemoryAccessToken();
       if (token) {
         config.headers["Authorization"] = `Bearer ${token}`;
       }

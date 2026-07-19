@@ -1,43 +1,27 @@
 // =============================================================================
-// Project ATLAS — Session Storage Helpers
+// Project ATLAS — Session marker helpers (Sprint-002)
 //
-// Manages access/refresh tokens in sessionStorage (tab-scoped, cleared on
-// tab close).  Longer-lived "remember me" tokens will be handled by IP-002
-// using httpOnly cookies issued by the backend — this module is intentionally
-// scoped to the in-memory session only.
+// Tokens are never kept in web storage (AUD-001 M-5): the access token is
+// in-memory (lib/auth/token) and the refresh token is an httpOnly backend
+// cookie. This module manages only the non-sensitive `atlas_session`
+// marker cookie the route middleware uses for server-side redirects —
+// it carries no credential and grants nothing by itself (the backend
+// enforces authentication on every request, ADR-004).
 // =============================================================================
 
-import type { UserSession } from "@/types";
+const MARKER_COOKIE = "atlas_session";
 
-const KEYS = {
-  ACCESS_TOKEN: "atlas.access_token",
-  SESSION: "atlas.session",
-} as const;
-
-export function saveSession(session: UserSession): void {
-  if (typeof window === "undefined") return;
-  sessionStorage.setItem(KEYS.ACCESS_TOKEN, session.access_token);
-  sessionStorage.setItem(KEYS.SESSION, JSON.stringify(session));
+export function setSessionMarker(): void {
+  if (typeof document === "undefined") return;
+  document.cookie = `${MARKER_COOKIE}=1; Path=/; SameSite=Lax; Max-Age=${60 * 60 * 24 * 30}`;
 }
 
-export function loadSession(): UserSession | null {
-  if (typeof window === "undefined") return null;
-  const raw = sessionStorage.getItem(KEYS.SESSION);
-  if (!raw) return null;
-  try {
-    return JSON.parse(raw) as UserSession;
-  } catch {
-    return null;
-  }
+export function clearSessionMarker(): void {
+  if (typeof document === "undefined") return;
+  document.cookie = `${MARKER_COOKIE}=; Path=/; SameSite=Lax; Max-Age=0`;
 }
 
-export function clearSession(): void {
-  if (typeof window === "undefined") return;
-  sessionStorage.removeItem(KEYS.ACCESS_TOKEN);
-  sessionStorage.removeItem(KEYS.SESSION);
-}
-
-export function getAccessToken(): string | null {
-  if (typeof window === "undefined") return null;
-  return sessionStorage.getItem(KEYS.ACCESS_TOKEN);
+export function hasSessionMarker(): boolean {
+  if (typeof document === "undefined") return false;
+  return document.cookie.split(";").some((c) => c.trim().startsWith(`${MARKER_COOKIE}=1`));
 }

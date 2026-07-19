@@ -1,29 +1,21 @@
 // =============================================================================
-// Project ATLAS — Auth Library
+// Project ATLAS — Auth Library (Sprint-002)
 //
-// Public surface for the auth subsystem.  Full OIDC / OAuth2 flows are
-// implemented in IP-002.  This module exposes the interface contracts and
-// stub implementations that S1.3 (Frontend Foundation) requires to wire up
-// the auth provider and route middleware without depending on IP-002 delivery.
+// Public surface for the auth subsystem: identity API bindings, in-memory
+// token holder, session-marker helpers, and route classification consumed
+// by the middleware guard.
 // =============================================================================
 
-export type { UserSession } from "@/types";
-export { saveSession, loadSession, clearSession, getAccessToken } from "./session";
-
-// ---------------------------------------------------------------------------
-// Auth configuration — values sourced from environment variables
-// ---------------------------------------------------------------------------
-
-export const AUTH_CONFIG = {
-  issuer: process.env.NEXT_PUBLIC_AUTH_ISSUER ?? "",
-  clientId: process.env.NEXT_PUBLIC_AUTH_CLIENT_ID ?? "",
-  redirectUri: process.env.NEXT_PUBLIC_AUTH_REDIRECT_URI ?? "",
-  postLogoutUri: process.env.NEXT_PUBLIC_AUTH_POST_LOGOUT_URI ?? "",
-
-  // PKCE + Authorization Code Flow (no client secret in the browser)
-  responseType: "code" as const,
-  scope: "openid profile email offline_access",
-} as const;
+export { authApi } from "./api";
+export type {
+  AuthUser,
+  MePayload,
+  MembershipView,
+  RegisterInput,
+  TokenPayload,
+} from "./api";
+export { clearSessionMarker, hasSessionMarker, setSessionMarker } from "./session";
+export { clearAccessToken, getAccessToken, setAccessToken } from "./token";
 
 // ---------------------------------------------------------------------------
 // Route classification — determines middleware behaviour
