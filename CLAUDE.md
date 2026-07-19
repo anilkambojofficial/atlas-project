@@ -14,7 +14,15 @@ This file is auto-loaded by Claude Code when the project is opened. It carries a
 
 ---
 
-## 2. Current State (as of 2026-07-11)
+## 2. Current State (corrected 2026-07-19 — Sprint-002 closure, finding P-1)
+
+> **ANTI-STALENESS RULE (mandatory):** this file is a snapshot and has
+> already caused one wrong engineering assumption (P-1, CLS-002 §3) by
+> going stale. Before acting on ANY status below, verify against the
+> repository itself: list the target folder, read
+> `docs/AI_Continuation_Pack.md` and the latest `docs/Sprint-*_Execution_Log.md`.
+> **On any conflict, the repository wins over this file — and the
+> conflict must be reported and this file corrected.**
 
 ### Build Packs — Complete ✅
 
@@ -34,28 +42,39 @@ This file is auto-loaded by Claude Code when the project is opened. It carries a
 | BP-011 | Integration Platform | Draft (Engineering Review) |
 | BP-012 | Production & Operations Platform | Draft (Engineering Review) |
 
-### Implementation Packs — In Progress
+### Implementation Packs — verified against `06_Implementation_Packs/` on 2026-07-19
 
-| IP | Title | Status |
-|----|-------|--------|
-| IP-000 | Implementation Roadmap | Draft (Engineering Review) |
-| IP-001 | Platform Foundation | Draft (Engineering Review) |
-| **IP-002** | **Identity & Access** | **NEXT — TO AUTHOR** |
-| IP-003 | Tenant Platform | Planned |
-| IP-004 | AI Platform | Planned |
-| IP-005 | Knowledge Platform | Planned |
-| IP-006 | Workflow Platform | Planned |
-| IP-007 | Meeting Intelligence | Planned |
-| IP-008 | Decision & SOP | Planned |
-| IP-009 | Notification Platform | Planned |
-| IP-010 | Integration Platform | Planned |
-| IP-011 | Production Operations | Planned |
+Document status and implementation status are **different dimensions** —
+conflating them caused finding P-1. Both are listed explicitly:
 
-**When the user types `IP-002` (or any IP-XXX), begin authoring that Implementation Pack immediately.** Verify current state by listing `06_Implementation_Packs/` before starting. Mirror the structure of the most recent completed IP (IP-001) as the template exemplar.
+| IP | Title | Document Status (file verified) | Implementation Status |
+|----|-------|--------------------------------|----------------------|
+| IP-000 | Implementation Roadmap | Authored — Draft (Engineering Review), 2026-07-08 | n/a (roadmap) |
+| IP-001 | Platform Foundation | Authored — Draft (Engineering Review) | ✅ Implemented — Sprint-001 (frozen `baseline-v1.0.0-sprint001`) |
+| IP-002 | Identity & Access Platform | Authored — Draft + **§31 As-Built Addendum (2026-07-19)** | ✅ Implemented — Sprint-002 (closure CLS-002; READY TO FREEZE) |
+| IP-003 | Tenant & Organization Platform | Authored — Draft (Engineering Review) | Not implemented (next per roadmap) |
+| IP-004 | AI Platform | Authored — Draft (Engineering Review) | Not implemented |
+| IP-005 | Knowledge Platform | Authored — Draft (Engineering Review) | Not implemented |
+| IP-006 | Workflow Platform | Authored — Draft (Engineering Review) | Not implemented (⚠ BP-007 scope ruling required first — CTX-001 §15.4) |
+| IP-007 | Meeting Intelligence Platform | Authored — Draft (Engineering Review) | Not implemented |
+| IP-008 | Decision & SOP Platform | Authored — Draft (Engineering Review) | Not implemented (⚠ BP↔IP off-by-one region — route via CTX-001 §13) |
+| IP-009 | Notification Platform | Authored — Draft (Engineering Review) | Not implemented |
+| IP-010 | Integration Platform | Authored — Draft (Engineering Review) | Not implemented |
+| IP-011 | Production & Operations | **DOES NOT EXIST — the only unauthored IP** | Not implemented; must be authored before Sprint-011 planning |
+
+**When the user types `IP-XXX` / "Sprint-XXX": the IP documents already
+exist (except IP-011) — NEVER re-author an existing IP.** Load the
+existing document (routing corrections: CTX-001 §13), the current sprint
+log, and `docs/AI_Continuation_Pack.md`, then implement per the
+stage-gate protocol. Only IP-011 is authoring work.
 
 ---
 
-## 3. BP-007 Authoring Directive
+## 3. BP-007 Authoring Directive — ✅ COMPLETED (historical; retained for template reference only)
+
+> BP-007 was authored and exists at `04_Build_Packs/BP-007_Workflow_Platform.md`.
+> Do NOT re-author it. Note the unresolved BP-007 scope conflict recorded
+> in CTX-001 §15.4 before any IP-006-adjacent work.
 
 Source: `04_Build_Packs/BP-ROADMAP.md` §5.8.
 
@@ -230,7 +249,12 @@ Every Build Pack starts with:
 
 ---
 
-## 9. Quick-Start Protocol
+## 9. Quick-Start Protocol — ⚠ HISTORICAL (Build Pack authoring phase, completed)
+
+> All Build Packs BP-000..BP-012 are authored. This protocol applies only
+> if the Product Owner explicitly commissions a NEW document. For
+> implementation work, the operative protocol is `docs/AI_Continuation_Pack.md`
+> §7–§8 and CON-001 §11–§12 — not this section.
 
 When user says `BP-007` (or the next BP in sequence):
 
